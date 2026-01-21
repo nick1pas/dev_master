@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list>
+
+    <!-- ================= NUKERS ================= -->
+
+    <class id="94"> <!-- Archmage -->
+        <stats
+            mAtkMul="1.30"
+            mCritRateMul="1.40"
+            pDefMul="0.90"
+            mDefMul="1.05"
+            castSpdMul="1.25"
+            evasionMul="0.95"
+            maxHpMul="0.85"
+            maxMpMul="1.30"
+            maxCpMul="0.80"
+        />
+    </class>
+
+    <class id="95"> <!-- Soultaker -->
+        <stats
+            mAtkMul="1.25"
+            mCritRateMul="1.35"
+            pDefMul="0.90"
+            mDefMul="1.10"
+            castSpdMul="1.20"
+            evasionMul="1.00"
+            maxHpMul="0.85"
+            maxMpMul="1.25"
+            maxCpMul="0.80"
+        />
+    </class>
+
+    <class id="110"> <!-- Storm Screamer -->
+        <stats
+            mAtkMul="1.35"
+            mCritRateMul="1.45"
+            pDefMul="0.85"
+            mDefMul="1.05"
+            castSpdMul="1.30"
+            evasionMul="0.95"
+            maxHpMul="0.80"
+            maxMpMul="1.35"
+            maxCpMul="0.75"
+        />
+    </class>
+
+    <class id="103"> <!-- Mystic Muse -->
+        <stats
+            mAtkMul="1.35"
+            mCritRateMul="1.45"
+            pDefMul="0.85"
+            mDefMul="1.05"
+            castSpdMul="1.30"
+            evasionMul="0.95"
+            maxHpMul="0.80"
+            maxMpMul="1.35"
+            maxCpMul="0.75"
+        />
+    </class>
+    <!-- ================= SUMMONERS ================= -->
+
+    <class id="96"> <!-- Arcana Lord -->
+        <stats
+            mAtkMul="1.10"
+            mCritRateMul="1.10"
+            pDefMul="0.95"
+            mDefMul="1.10"
+            castSpdMul="1.10"
+            evasionMul="1.00"
+            maxHpMul="0.95"
+            maxMpMul="1.20"
+            maxCpMul="0.90"
+        />
+    </class>
+
+    <class id="107"> <!-- Elemental Master -->
+        <stats
+            mAtkMul="1.05"
+            mCritRateMul="1.05"
+            pDefMul="1.00"
+            mDefMul="1.15"
+            castSpdMul="1.10"
+            evasionMul="1.00"
+            maxHpMul="1.00"
+            maxMpMul="1.20"
+            maxCpMul="0.95"
+        />
+    </class>
+
+    <class id="111"> <!-- Spectral Master -->
+        <stats
+            mAtkMul="1.10"
+            mCritRateMul="1.10"
+            pDefMul="0.95"
+            mDefMul="1.10"
+            castSpdMul="1.10"
+            evasionMul="1.00"
+            maxHpMul="0.95"
+            maxMpMul="1.20"
+            maxCpMul="0.90"
+        />
+    </class>
+
+    <!-- ================= SUPPORT MAGES ================= -->
+
+    <class id="97"> <!-- Cardinal -->
+        <stats
+            mAtkMul="0.90"
+            mCritRateMul="0.85"
+            pDefMul="1.05"
+            mDefMul="1.30"
+            castSpdMul="1.20"
+            evasionMul="1.00"
+            maxHpMul="1.00"
+            maxMpMul="1.40"
+            maxCpMul="1.00"
+        />
+    </class>
+
+    <class id="98"> <!-- Hierophant -->
+        <stats
+            mAtkMul="0.85"
+            mCritRateMul="0.80"
+            pDefMul="1.10"
+            mDefMul="1.35"
+            castSpdMul="1.15"
+            evasionMul="1.00"
+            maxHpMul="1.05"
+            maxMpMul="1.35"
+            maxCpMul="1.05"
+        />
+    </class>
+
+    <class id="105"> <!-- Eva's Saint -->
+        <stats
+            mAtkMul="0.85"
+            mCritRateMul="0.80"
+            pDefMul="1.10"
+            mDefMul="1.40"
+            castSpdMul="1.25"
+            evasionMul="1.05"
+            maxHpMul="1.05"
+            maxMpMul="1.45"
+            maxCpMul="1.05"
+        />
+    </class>
+
+    <class id="112"> <!-- Shillien Saint -->
+        <stats
+            mAtkMul="0.90"
+            mCritRateMul="0.85"
+            pDefMul="1.10"
+            mDefMul="1.35"
+            castSpdMul="1.20"
+            evasionMul="1.05"
+            maxHpMul="1.00"
+            maxMpMul="1.35"
+            maxCpMul="1.00"
+        />
+    </class>
+
+</list>

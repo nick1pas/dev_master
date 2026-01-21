@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list>
+   <npc id="50008">
+       <appearance name="Boneca Elfa" name_color="FFFFFF" title="Safadinha" title_color="FFEC00" radius="7" height="23" race="1" sex="1" class="103" hair_style="0" hair_color="0" face="0" hero="1" enchant="16" />
+       <items right_hand="7575" left_hand="0" chest="7861" legs="0" gloves="7862" feet="7863" hair="6842" hair2="0" />
+       <clan clan_id="0" clan_crest="0" ally_id="0" ally_crest="0" pledge="0" />
+   </npc>
+</list>

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list>
+
+    <!-- ================= HUMAN ================= -->
+
+    <class id="88"> <!-- Duelist -->
+        <stats
+            pAtkMul="1.15"
+            pDefMul="1.05"
+            mDefMul="1.00"
+            critRateMul="1.20"
+            accuracyMul="1.05"
+            evasionMul="1.00"
+            atkSpdMul="1.05"
+            maxHpMul="1.05"
+            maxMpMul="0.90"
+            maxCpMul="1.10"
+        />
+    </class>
+
+    <class id="89"> <!-- Dreadnought -->
+        <stats
+            pAtkMul="1.10"
+            pDefMul="1.20"
+            mDefMul="1.10"
+            critRateMul="0.90"
+            accuracyMul="1.00"
+            evasionMul="0.90"
+            atkSpdMul="0.95"
+            maxHpMul="1.20"
+            maxMpMul="0.85"
+            maxCpMul="1.15"
+        />
+    </class>
+
+    <class id="90"> <!-- Phoenix Knight -->
+        <stats
+            pAtkMul="0.95"
+            pDefMul="1.30"
+            mDefMul="1.25"
+            critRateMul="0.80"
+            accuracyMul="1.00"
+            evasionMul="0.95"
+            atkSpdMul="0.90"
+            maxHpMul="1.25"
+            maxMpMul="0.90"
+            maxCpMul="1.30"
+        />
+    </class>
+
+    <class id="91"> <!-- Hell Knight -->
+        <stats
+            pAtkMul="1.00"
+            pDefMul="1.25"
+            mDefMul="1.20"
+            critRateMul="0.85"
+            accuracyMul="1.00"
+            evasionMul="0.95"
+            atkSpdMul="0.95"
+            maxHpMul="1.25"
+            maxMpMul="0.90"
+            maxCpMul="1.30"
+        />
+    </class>
+
+    <class id="92"> <!-- Sagittarius -->
+        <stats
+            pAtkMul="1.25"
+            pDefMul="0.90"
+            mDefMul="0.95"
+            critRateMul="1.30"
+            accuracyMul="1.20"
+            evasionMul="1.05"
+            atkSpdMul="1.15"
+            maxHpMul="0.90"
+            maxMpMul="0.85"
+            maxCpMul="0.95"
+        />
+    </class>
+
+    <class id="93"> <!-- Adventurer -->
+        <stats
+            pAtkMul="1.10"
+            pDefMul="0.95"
+            mDefMul="1.00"
+            critRateMul="1.35"
+            accuracyMul="1.10"
+            evasionMul="1.20"
+            atkSpdMul="1.10"
+            maxHpMul="0.95"
+            maxMpMul="0.85"
+            maxCpMul="1.00"
+        />
+    </class>
+
+    <!-- ================= ELF ================= -->
+
+    <class id="99"> <!-- Eva's Templar -->
+        <stats
+            pAtkMul="0.90"
+            pDefMul="1.35"
+            mDefMul="1.30"
+            critRateMul="0.75"
+            accuracyMul="1.00"
+            evasionMul="1.00"
+            atkSpdMul="0.90"
+            maxHpMul="1.20"
+            maxMpMul="1.00"
+            maxCpMul="1.30"
+        />
+    </class>
+
+    <class id="100"> <!-- Sword Muse -->
+        <stats
+            pAtkMul="0.95"
+            pDefMul="1.05"
+            mDefMul="1.05"
+            critRateMul="1.00"
+            accuracyMul="1.05"
+            evasionMul="1.05"
+            atkSpdMul="1.00"
+            maxHpMul="1.00"
+            maxMpMul="1.00"
+            maxCpMul="1.05"
+        />
+    </class>
+
+    <class id="101"> <!-- Wind Rider -->
+        <stats
+            pAtkMul="1.10"
+            pDefMul="0.90"
+            mDefMul="0.95"
+            critRateMul="1.40"
+            accuracyMul="1.10"
+            evasionMul="1.25"
+            atkSpdMul="1.15"
+            maxHpMul="0.90"
+            maxMpMul="0.90"
+            maxCpMul="1.00"
+        />
+    </class>
+
+    <class id="102"> <!-- Moonlight Sentinel -->
+        <stats
+            pAtkMul="1.20"
+            pDefMul="0.90"
+            mDefMul="0.95"
+            critRateMul="1.30"
+            accuracyMul="1.20"
+            evasionMul="1.10"
+            atkSpdMul="1.20"
+            maxHpMul="0.90"
+            maxMpMul="0.85"
+            maxCpMul="0.95"
+        />
+    </class>
+
+    <!-- ================= DARK ELF ================= -->
+
+    <class id="109"> <!-- Ghost Sentinel -->
+        <stats
+            pAtkMul="1.25"
+            pDefMul="0.85"
+            mDefMul="0.90"
+            critRateMul="1.35"
+            accuracyMul="1.25"
+            evasionMul="1.10"
+            atkSpdMul="1.20"
+            maxHpMul="0.85"
+            maxMpMul="0.80"
+            maxCpMul="0.95"
+        />
+    </class>
+
+    <class id="108"> <!-- Ghost Hunter -->
+        <stats
+            pAtkMul="1.15"
+            pDefMul="0.90"
+            mDefMul="0.95"
+            critRateMul="1.45"
+            accuracyMul="1.10"
+            evasionMul="1.30"
+            atkSpdMul="1.15"
+            maxHpMul="0.85"
+            maxMpMul="0.85"
+            maxCpMul="0.95"
+        />
+    </class>
+
+    <!-- ================= ORC ================= -->
+
+    <class id="113"> <!-- Titan -->
+        <stats
+            pAtkMul="1.40"
+            pDefMul="1.00"
+            mDefMul="0.85"
+            critRateMul="0.80"
+            accuracyMul="0.95"
+            evasionMul="0.80"
+            atkSpdMul="0.90"
+            maxHpMul="1.40"
+            maxMpMul="0.70"
+            maxCpMul="1.20"
+        />
+    </class>
+
+    <class id="114"> <!-- Grand Khavatari -->
+        <stats
+            pAtkMul="1.20"
+            pDefMul="0.95"
+            mDefMul="0.90"
+            critRateMul="1.10"
+            accuracyMul="1.05"
+            evasionMul="1.05"
+            atkSpdMul="1.25"
+            maxHpMul="1.10"
+            maxMpMul="0.80"
+            maxCpMul="1.05"
+        />
+    </class>
+
+    <!-- ================= DWARF ================= -->
+
+    <class id="117"> <!-- Fortune Seeker -->
+        <stats
+            pAtkMul="1.10"
+            pDefMul="1.15"
+            mDefMul="1.00"
+            critRateMul="1.00"
+            accuracyMul="1.05"
+            evasionMul="0.90"
+            atkSpdMul="0.95"
+            maxHpMul="1.20"
+            maxMpMul="0.70"
+            maxCpMul="1.10"
+        />
+    </class>
+
+    <class id="118"> <!-- Maestro -->
+        <stats
+            pAtkMul="0.95"
+            pDefMul="1.30"
+            mDefMul="1.05"
+            critRateMul="0.85"
+            accuracyMul="1.00"
+            evasionMul="0.85"
+            atkSpdMul="0.85"
+            maxHpMul="1.30"
+            maxMpMul="0.75"
+            maxCpMul="1.25"
+        />
+    </class>
+
+</list>
