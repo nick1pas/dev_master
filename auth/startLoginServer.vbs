@@ -3,7 +3,7 @@ Dim path
 Set shell = WScript.CreateObject("WScript.Shell")
 path = shell.Environment.Item("JAVA_HOME")
 If path = "" Then
-    MsgBox "Could not find JAVA_HOME environment variable!", vbOKOnly, "Game Server"
+    MsgBox "Could not find JAVA_HOME environment variable!", vbOKOnly, "Login Server"
 Else
     If InStr(path, "\bin") = 0 Then
         path = path + "\bin\"

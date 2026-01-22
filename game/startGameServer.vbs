@@ -18,7 +18,7 @@ End If
 
 ' Generate command.
 Dim command
-command = path & "java -Xmx1280m -cp ../libs/*; net.sf.l2j.gameserver.GameServer"
+command = path & "java -Xmx2000m -cp ../libs/*; net.sf.l2j.gameserver.GameServer"
 
 ' Run the server.
 Dim exitcode
