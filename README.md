@@ -8,7 +8,7 @@ Se você baixou o pacote do servidor e está com dúvidas de como executar, siga
 
 | Componente   | Download |
 |--------------|----------|
-| 🔧 Client Files (System, Animations, SysTextures...) | [Download](https://mega.nz/file/gmEAhRSY#3Trm55-Vz-EAvG9QQ0hJF4AGYPvDOCmcvohL7YQ8dTY) |
+| 🔧 Client Files (System, Animations, SysTextures...) | [Download Client](https://mega.nz/file/gmEAhRSY#3Trm55-Vz-EAvG9QQ0hJF4AGYPvDOCmcvohL7YQ8dTY) |
 | ☕ Java 11 | [Download Java 11](https://mega.nz/file/V7tj1arS#OKWaTzaCqYK0m3iMmR0kW3TddfAJoiu8a20kOFEKShk) |
 | 🛢️ MariaDB 10.4 | [Download MariaDB](https://mega.nz/file/1jEykRgL#DDuIGktiFbmE-M0jMzhUvYVckw1U0ov-OnZEYS5vopU) |
 
@@ -94,7 +94,7 @@ Execute o servidor clicando com o botão direito no `.launch` desejado e escolha
 
 Se quiser compilar o projeto fora do Eclipse:
 
-- Use o `build.xml` com o Apache Ant para compilar o código-fonte
+- Use o `build.xml` com o EclipesIDE para compilar o código-fonte
   - Ele irá gerar os `.class` e `.jar` necessários
 - Depois use o `amount.xml` para:
   - Agrupar LoginServer, GameServer, Imgs, Tools e libs
@@ -104,7 +104,7 @@ Se quiser compilar o projeto fora do Eclipse:
 
 ## 📌 Observações
 
-- O projeto requer Java 14 especificamente — versões superiores podem gerar incompatibilidades.
+- O projeto requer Java 11 especificamente — versões superiores podem gerar incompatibilidades.
 - Certifique-se de que o MariaDB está com o serviço ativo antes de rodar o script.
 
 ---
