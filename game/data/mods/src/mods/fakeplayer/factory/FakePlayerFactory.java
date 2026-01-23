@@ -22,7 +22,6 @@ import mods.fakeplayer.manager.FakePlayerManager;
 
 public final class FakePlayerFactory
 {
-	
 	private FakePlayerFactory()
 	{
 		
@@ -54,15 +53,18 @@ public final class FakePlayerFactory
 		final Sex sex = Rnd.get(2) == 0 ? Sex.MALE : Sex.FEMALE;
 		
 		final String name = FakeNameData.getInstance().getRandomName(sex);
-		String accountName = "AutoPilot_" + IdFactory.getInstance().getNextId();
+		
+		String accountName = "AutoPilot_" + name + "AI";
 		
 		final PcAppearance appearance = new PcAppearance(face, hairColor, hairStyle, sex);
 		int objectId = IdFactory.getInstance().getNextId();
+		
 		// ===============================
 		// PLAYER
 		// ===============================
+		Player.create(objectId, pcTemplate, accountName, name, hairStyle, hairColor, face, sex);
 		final FakePlayer fake = new FakePlayer(objectId, pcTemplate, accountName, appearance);
-		
+		fake.registerAccount();
 		// ===============================
 		// IDENTIDADE
 		// ===============================
@@ -101,15 +103,13 @@ public final class FakePlayerFactory
 					if (ItemTable.getInstance().getTemplate(inst.getItemId()).getCrystalType() != CrystalType.NONE)
 						inst.setEnchantLevel(Rnd.get(5, 25));
 					fake.getInventory().equipItem(inst);
-					
 				}
 			}
 		}
 		fake.getStatus().setCurrentHpMp(fake.getMaxHp(), fake.getMaxMp());
 		fake.getStatus().setCurrentCp(fake.getMaxCp());
 		fake.rewardSkills();
-		Player.create(objectId, pcTemplate, accountName, name, hairStyle, hairColor, face, sex);
-		fake.registerAccount();
+		
 		// ===============================
 		// SPAWN REAL
 		// ===============================

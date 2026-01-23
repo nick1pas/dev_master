@@ -33,9 +33,44 @@ public class L2LoginServer
 	private GameServerListener _gameServerListener;
 	private SelectorThread<L2LoginClient> _selectorThread;
 	
-	public static void main(String[] args) throws Exception
+	public static void main(String[] args)
 	{
-		loginServer = new L2LoginServer();
+		try
+		{
+			loginServer = new L2LoginServer();
+		}
+		catch (Exception e)
+		{
+			_log.severe("Failed to start LoginServer: " + e.getMessage());
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+	
+	private static boolean isWindows()
+	{
+		return System.getProperty("os.name").toLowerCase().contains("win");
+	}
+	
+	public L2LoginServer() throws Exception
+	{
+		if (isWindows())
+		{
+			try
+			{
+				if (!GraphicsEnvironment.isHeadless())
+				{
+					System.out.println("Auth: Running in Interface GUI.");
+					new LoginServerLaucher();
+				}
+			}
+			catch (Throwable t)
+			{
+				// Nunca deixar GUI quebrar o LoginServer
+			}
+		}
+		
+		startLoginServer();
 	}
 	
 	public static L2LoginServer getInstance()
@@ -43,31 +78,22 @@ public class L2LoginServer
 		return loginServer;
 	}
 	
-	public L2LoginServer() throws Exception
+	private void startLoginServer() throws Exception
 	{
-		if (!GraphicsEnvironment.isHeadless())
+		final String LOG_FOLDER = "./log";
+		final String LOG_NAME = "config/log.cfg";
+		
+		new File(LOG_FOLDER).mkdir();
+		
+		try (InputStream is = new FileInputStream(LOG_NAME))
 		{
-			System.out.println("Auth: Running in Interface GUI.");
-			new LoginServerLaucher();
+			LogManager.getLogManager().readConfiguration(is);
 		}
 		
-		final String LOG_FOLDER = "./log"; // Name of folder for log file
-		final String LOG_NAME = "config/log.cfg"; // Name of log file
+		StringUtil.printSection("Master");
 		
-		// Create log folder
-		File logFolder = new File(LOG_FOLDER);
-		logFolder.mkdir();
-		
-		// Create input stream for log file -- or store file data into memory
-		InputStream is = new FileInputStream(new File(LOG_NAME));
-		LogManager.getLogManager().readConfiguration(is);
-		is.close();
-		
-		StringUtil.printSection("aCis");
-		// Initialize config
 		Config.loadLoginServer();
 		
-		// Factories
 		ConnectionPool.init();
 		
 		StringUtil.printSection("LoginController");
@@ -77,39 +103,40 @@ public class L2LoginServer
 		StringUtil.printSection("Ban List");
 		loadBanFile();
 		
-		StringUtil.printSection("IP, Ports & Socket infos");
+		bindNetwork();
+	}
+	
+	private void bindNetwork()
+	{
 		InetAddress bindAddress = null;
+		
 		if (!Config.LOGIN_BIND_ADDRESS.equals("*"))
 		{
 			try
 			{
 				bindAddress = InetAddress.getByName(Config.LOGIN_BIND_ADDRESS);
 			}
-			catch (UnknownHostException e1)
+			catch (UnknownHostException e)
 			{
-				_log.severe("WARNING: The LoginServer bind address is invalid, using all available IPs. Reason: " + e1.getMessage());
-				if (Config.DEVELOPER)
-					e1.printStackTrace();
+				_log.severe("Invalid bind address, using all IPs.");
 			}
 		}
+		
 		final SelectorConfig sc = new SelectorConfig();
 		sc.MAX_READ_PER_PASS = Config.MMO_MAX_READ_PER_PASS;
 		sc.MAX_SEND_PER_PASS = Config.MMO_MAX_SEND_PER_PASS;
 		sc.SLEEP_TIME = Config.MMO_SELECTOR_SLEEP_TIME;
 		sc.HELPER_BUFFER_COUNT = Config.MMO_HELPER_BUFFER_COUNT;
 		
-		final L2LoginPacketHandler lph = new L2LoginPacketHandler();
-		final SelectorHelper sh = new SelectorHelper();
 		try
 		{
-			_selectorThread = new SelectorThread<>(sc, sh, lph, sh, sh);
+			_selectorThread = new SelectorThread<>(sc, new SelectorHelper(), new L2LoginPacketHandler(), new SelectorHelper(), new SelectorHelper());
+			_selectorThread.openServerSocket(bindAddress, Config.PORT_LOGIN);
+			_selectorThread.start();
 		}
 		catch (IOException e)
 		{
-			_log.severe("FATAL: Failed to open selector. Reason: " + e.getMessage());
-			if (Config.DEVELOPER)
-				e.printStackTrace();
-			
+			_log.severe("FATAL: Failed to start LoginServer socket.");
 			System.exit(1);
 		}
 		
@@ -117,34 +144,14 @@ public class L2LoginServer
 		{
 			_gameServerListener = new GameServerListener();
 			_gameServerListener.start();
-			_log.info("Listening for gameservers on " + Config.GAME_SERVER_LOGIN_HOST + ":" + Config.GAME_SERVER_LOGIN_PORT);
 		}
 		catch (IOException e)
 		{
-			_log.severe("FATAL: Failed to start the gameserver listener. Reason: " + e.getMessage());
-			if (Config.DEVELOPER)
-				e.printStackTrace();
-			
+			_log.severe("FATAL: Failed to start GameServer listener.");
 			System.exit(1);
 		}
 		
-		try
-		{
-			_selectorThread.openServerSocket(bindAddress, Config.PORT_LOGIN);
-		}
-		catch (IOException e)
-		{
-			_log.severe("FATAL: Failed to open server socket. Reason: " + e.getMessage());
-			if (Config.DEVELOPER)
-				e.printStackTrace();
-			
-			System.exit(1);
-		}
-		_selectorThread.start();
 		_log.info("Loginserver ready on " + (bindAddress == null ? "*" : bindAddress.getHostAddress()) + ":" + Config.PORT_LOGIN);
-		
-		StringUtil.printSection("Waiting for gameserver answer");
-
 	}
 	
 	public GameServerListener getGameServerListener()

@@ -17,9 +17,6 @@ import net.sf.l2j.gameserver.network.serverpackets.AskJoinParty;
 import net.sf.l2j.gameserver.network.serverpackets.SystemMessage;
 import net.sf.l2j.timezone.TimeFarmZoneManager;
 
-import mods.fakeplayer.actor.FakePlayer;
-import mods.fakeplayer.party.FakePartyManager;
-
 /**
  * format cdd
  */
@@ -126,14 +123,6 @@ public final class RequestJoinParty extends L2GameClientPacket
 		if (target.isInOlympiadMode() || requestor.isInOlympiadMode())
 			return;
 		
-		if (target instanceof FakePlayer)
-		{
-			FakePartyManager.getInstance().requestPlayer(requestor, (FakePlayer) target);
-			requestor.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.YOU_INVITED_S1_TO_PARTY).addPcName(target));
-			return;
-		}
-
-		
 		if (!requestor.isInParty())
 			createNewParty(target, requestor);
 		else
@@ -180,6 +169,8 @@ public final class RequestJoinParty extends L2GameClientPacket
 			party.setPendingInvitation(true);
 			
 			requestor.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.YOU_INVITED_S1_TO_PARTY).addPcName(target));
+			target.setPartyInvite(requestor, target);
+			//
 			if (Config.DEBUG)
 				_log.fine("Sent out a party invitation to " + target.getName());
 		}
@@ -209,6 +200,7 @@ public final class RequestJoinParty extends L2GameClientPacket
 				_log.fine("Sent out a party invitation to " + target.getName());
 			
 			requestor.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.YOU_INVITED_S1_TO_PARTY).addPcName(target));
+			target.setPartyInvite(requestor, target);
 		}
 		else
 		{

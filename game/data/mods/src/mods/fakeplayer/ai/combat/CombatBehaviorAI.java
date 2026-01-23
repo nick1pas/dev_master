@@ -32,11 +32,11 @@ import mods.fakeplayer.interfaces.IPrivateBuy;
 import mods.fakeplayer.interfaces.IPrivateSeller;
 import mods.fakeplayer.interfaces.IShotsSpender;
 import mods.fakeplayer.interfaces.ITargetSelect;
-import mods.fakeplayer.interfaces.ITeleportTown;
+import mods.fakeplayer.interfaces.ITeleport;
 import mods.fakeplayer.interfaces.ITownStore;
 import mods.fakeplayer.skills.SkillCombo;
 
-public abstract class CombatBehaviorAI extends AbstractFakePlayerAI implements IDeath, ITownStore, IEventRegister, IPartyRange, IExplorerWalker, ITeleportTown, ICrafter, IPickup, ILevel, IShotsSpender, IPrivateSeller, IPrivateBuy, IPotionSpender, IEquipes, IConsumableSpender, IBufferSpender, IAttacker, ITargetSelect
+public abstract class CombatBehaviorAI extends AbstractFakePlayerAI implements IDeath, ITownStore, IEventRegister, IPartyRange, IExplorerWalker, ITeleport, ICrafter, IPickup, ILevel, IShotsSpender, IPrivateSeller, IPrivateBuy, IPotionSpender, IEquipes, IConsumableSpender, IBufferSpender, IAttacker, ITargetSelect
 {
 	protected Creature _target;
 	protected SkillCombo combo;
@@ -47,6 +47,7 @@ public abstract class CombatBehaviorAI extends AbstractFakePlayerAI implements I
 	protected long ARCHER_DECISION_DELAY = 700; // ms
 	
 	protected Set<String> _usedResponses = new HashSet<>();
+	private final Set<String> _used = new HashSet<>();
 	
 	public CombatBehaviorAI(FakePlayer character)
 	{
@@ -58,11 +59,13 @@ public abstract class CombatBehaviorAI extends AbstractFakePlayerAI implements I
 	{
 		if (handleDeath(_fakePlayer))
 			return;
+		
 		handlePartyCohesion(_fakePlayer);
 		handleExplorer(_fakePlayer, _target);
 		HandlerTeleport(_fakePlayer);
 		handleTvTRegister(_fakePlayer);
 		handleTownActivity(_fakePlayer);
+		
 	}
 	
 	public void clearTarget()
@@ -161,7 +164,7 @@ public abstract class CombatBehaviorAI extends AbstractFakePlayerAI implements I
 		
 		ChatContext ctx = _fakePlayer.resolveContext();
 		
-		String response = FakeChatData.getInstance().getRandomResponse(Say2.TELL, _fakePlayer.getLang(), ctx, _usedResponses);
+		String response = FakeChatData.getInstance().getRandomResponse(msg.getTypeId(), _fakePlayer.getLang(), ctx, _usedResponses);
 		
 		if (response == null)
 			return;
@@ -172,10 +175,8 @@ public abstract class CombatBehaviorAI extends AbstractFakePlayerAI implements I
 		msg.markSeen();
 		msg.markAnswered();
 		
-		_fakePlayer.sendTell(msg.getSenderName(), response);
+		_fakePlayer.sendTell(msg.getSenderName(), response, msg.getTypeId());
 	}
-	
-	private final Set<String> _used = new HashSet<>();
 	
 	public void onGlobalChat()
 	{
@@ -184,12 +185,16 @@ public abstract class CombatBehaviorAI extends AbstractFakePlayerAI implements I
 		
 		long now = System.currentTimeMillis();
 		
-		if (Rnd.get(100) > 1)
-			return;
+		int chatId = Say2.ALL;
+		
+		if (Rnd.get(100) > 50)
+		{
+			chatId = Say2.SHOUT;
+		}
 		
 		ChatContext ctx = _fakePlayer.resolveContext();
 		
-		String response = FakeChatData.getInstance().getRandomResponse(Say2.ALL, _fakePlayer.getLang(), ctx, _used);
+		String response = FakeChatData.getInstance().getRandomResponse(chatId, _fakePlayer.getLang(), ctx, _used);
 		
 		if (response == null)
 			return;
@@ -197,7 +202,7 @@ public abstract class CombatBehaviorAI extends AbstractFakePlayerAI implements I
 		_used.add(response);
 		
 		_fakePlayer.setLastChatGlobalTime(now);
-		_fakePlayer.sendGlobalMessage(response);
+		_fakePlayer.sendGlobalMessage(response, chatId);
 		
 		if (_used.size() > 30)
 			_used.clear();

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import net.sf.l2j.Config;
-import net.sf.l2j.gameserver.geoengine.GeoEngine;
 import net.sf.l2j.gameserver.geoengine.geodata.GeoStructure;
 
 /**
@@ -238,7 +237,7 @@ public class NodeBuffer
 		// Z distance between nearby cells is higher than cell size, record as geodata bug
 		if (node.getLoc().getZ() > (z + 2 * GeoStructure.CELL_HEIGHT))
 		{
-			GeoEngine.getInstance().addGeoBug(node.getLoc(), "NodeBufferDiag: Check Z coords.");
+			//
 			return;
 		}
 		

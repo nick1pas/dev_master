@@ -8,8 +8,6 @@ import net.sf.l2j.gameserver.model.actor.Player;
 import net.sf.l2j.gameserver.model.entity.Duel.DuelState;
 import net.sf.l2j.gameserver.taskmanager.PvpFlagTaskManager;
 
-import mods.fakeplayer.actor.FakePlayer;
-
 public class TvTEventTeleporter implements Runnable
 {
 	/** The instance of the player to teleport */
@@ -54,15 +52,7 @@ public class TvTEventTeleporter implements Runnable
 		int randomOffsetX = Rnd.get(100) - 50; // -50 a +49
 		int randomOffsetY = Rnd.get(100) - 50; // -50 a +49
 		
-		if (_playerInstance instanceof FakePlayer)
-		{
-			FakePlayer fake = (FakePlayer) _playerInstance;
-			fake.teleToLocation(_coordinates[0] + randomOffsetX, _coordinates[1] + randomOffsetY, _coordinates[2], 0);
-		}
-		else
-		{
-			_playerInstance.teleToLocation(_coordinates[0] + randomOffsetX, _coordinates[1] + randomOffsetY, _coordinates[2], 0);
-		}
+		_playerInstance.teleToLocation(_coordinates[0] + randomOffsetX, _coordinates[1] + randomOffsetY, _coordinates[2], 0);
 		
 		if (TvTEvent.isStarted() && !_adminRemove)
 		{

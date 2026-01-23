@@ -9,7 +9,7 @@ public class FakePartyManager
 {
 	private static final int MAX_PARTY_SIZE = 8;
 	private static final int MAX_FAKE_MEMBERS = 7;
-		
+	
 	/*
 	 * =============================== Player → Fake (AUTO ACCEPT) ===============================
 	 */
@@ -25,6 +25,10 @@ public class FakePartyManager
 			leader.setParty(partyCreate);
 			
 			target.joinParty(partyCreate);
+			target.setActiveRequester(null);
+			if (leader.isInParty())
+				leader.getParty().setPendingInvitation(false);
+			leader.onTransactionResponse();
 			
 			return false;
 		}
@@ -41,8 +45,12 @@ public class FakePartyManager
 		if (countFakeMembers(party) >= MAX_FAKE_MEMBERS)
 			return false;
 		
-		// ✅ Fake aceita automaticamente
 		target.joinParty(party);
+		
+		target.setActiveRequester(null);
+		if (leader.isInParty())
+			leader.getParty().setPendingInvitation(false);
+		leader.onTransactionResponse();
 		return true;
 	}
 	
@@ -70,4 +78,3 @@ public class FakePartyManager
 		private static final FakePartyManager INSTANCE = new FakePartyManager();
 	}
 }
-

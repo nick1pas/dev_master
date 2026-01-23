@@ -48,8 +48,6 @@ import net.sf.l2j.launcher.panel.DroplistFrame;
 import net.sf.l2j.launcher.panel.GameConfigFrame;
 import net.sf.l2j.launcher.panel.ItemsSearchFrame;
 
-import mods.fakeplayer.gui.PhantomPanel;
-
 public class GameServerLauncher
 {
 	JTextArea txtrConsole;
@@ -313,19 +311,6 @@ public class GameServerLauncher
 		});
 		
 		mnNpcs.add(miDroplist);
-		
-		
-		final JMenu mnFakes = new JMenu("FakePlayer");
-		mnFakes.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-		menuBar.add(mnFakes);
-		
-		final JMenuItem fakePanel = new JMenuItem("Dashborad");
-		fakePanel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-		fakePanel.addActionListener(e -> {
-			new PhantomPanel();
-		});
-		
-		mnFakes.add(fakePanel);
 		
 		frame.setJMenuBar(menuBar);
 		frame.setIconImages(icons);

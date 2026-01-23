@@ -22,8 +22,8 @@ public final class GeoStructure
 	public static final byte CELL_FLAG_N_AND_W = CELL_FLAG_N | CELL_FLAG_W;
 	
 	public static final int CELL_SIZE = 16;
-	public static final int CELL_HEIGHT = 8;
-	public static final int CELL_IGNORE_HEIGHT = CELL_HEIGHT * 6;
+	public static final int CELL_HEIGHT = 12;
+	public static final int CELL_IGNORE_HEIGHT = CELL_HEIGHT * 16;
 	
 	// blocks
 	public static final byte TYPE_FLAT_L2J_L2OFF = 0;

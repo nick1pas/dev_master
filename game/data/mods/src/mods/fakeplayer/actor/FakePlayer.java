@@ -29,10 +29,11 @@ import net.sf.l2j.gameserver.datatables.ClanTable;
 import net.sf.l2j.gameserver.datatables.ItemTable;
 import net.sf.l2j.gameserver.datatables.MapRegionTable;
 import net.sf.l2j.gameserver.datatables.MapRegionTable.TeleportWhereType;
+import net.sf.l2j.gameserver.handler.chathandlers.ChatAll;
+import net.sf.l2j.gameserver.handler.chathandlers.ChatShout;
 import net.sf.l2j.gameserver.instancemanager.CastleManager;
 import net.sf.l2j.gameserver.instancemanager.CursedWeaponsManager;
 import net.sf.l2j.gameserver.instancemanager.PrivateMessageManager.PrivateMessage;
-import net.sf.l2j.gameserver.model.BlockList;
 import net.sf.l2j.gameserver.model.L2Clan;
 import net.sf.l2j.gameserver.model.L2ClanMember;
 import net.sf.l2j.gameserver.model.L2Effect;
@@ -117,6 +118,7 @@ import mods.fakeplayer.data.FakeChatData.ChatContext;
 import mods.fakeplayer.enums.ExplorerContext;
 import mods.fakeplayer.interfaces.ICrafter;
 import mods.fakeplayer.manager.FakePlayerManager;
+import mods.fakeplayer.party.FakePartyManager;
 
 public class FakePlayer extends Player
 {
@@ -1040,7 +1042,7 @@ public class FakePlayer extends Player
 		((CombatBehaviorAI) getFakeAi()).onPrivateMessage(msg);
 	}
 	
-	public void sendTell(String targetName, String text)
+	public void sendTell(String targetName, String text, int type)
 	{
 		if (isPrivateBuying() || isPrivateSelling() || isPrivateManufactureing())
 			return;
@@ -1049,13 +1051,16 @@ public class FakePlayer extends Player
 		if (target == null)
 			return;
 		
-		target.sendPacket(new CreatureSay(getObjectId(), Say2.TELL, getName(), text));
+		target.sendPacket(new CreatureSay(getObjectId(), type, getName(), text));
 		
-		sendPacket(new CreatureSay(getObjectId(), Say2.TELL, "->" + target.getName(), text));
+		sendPacket(new CreatureSay(getObjectId(), type, "->" + target.getName(), text));
 	}
 	
 	public ChatContext resolveContext()
 	{
+		if (isDead())
+			return ChatContext.DEAD;
+		
 		// Combate sempre tem prioridade
 		if (isInCombat() || getPvpFlag() > 0)
 			return ChatContext.COMBAT;
@@ -1088,18 +1093,21 @@ public class FakePlayer extends Player
 		return ChatContext.FARM;
 	}
 	
-	public void sendGlobalMessage(String text)
+	public void sendGlobalMessage(String text, int chatId)
 	{
 		if (isPrivateBuying() || isPrivateSelling() || isPrivateManufactureing())
 			return;
-		
-		final CreatureSay cs = new CreatureSay(getObjectId(), Say2.ALL, getName(), text);
-		for (Player player : getKnownList().getKnownTypeInRadius(Player.class, 1250))
+		if (chatId == 1)
 		{
-			if (!BlockList.isBlocked(player, this))
-				player.sendPacket(cs);
+			ChatShout chat = new ChatShout();
+			chat.handleChat(chatId, this, null, text);
 		}
-		sendPacket(cs);
+		if (chatId == 0)
+		{
+			
+			ChatAll chat = new ChatAll();
+			chat.handleChat(chatId, this, null, text);
+		}
 		
 	}
 	
@@ -1985,6 +1993,35 @@ public class FakePlayer extends Player
 		byte[] bytes = new byte[32];
 		new SecureRandom().nextBytes(bytes);
 		return Base64.getEncoder().encodeToString(bytes);
+	}
+	
+	@Override
+	public void setPartyInvite(Player requestor, Player target)
+	{
+		if (Rnd.get(100) > 50)
+		{
+			target.setActiveRequester(null);
+			if (requestor.isInParty())
+				requestor.getParty().setPendingInvitation(false);
+			requestor.onTransactionResponse();
+			
+			if (Rnd.get(100) > 50)
+			{
+				
+			}
+			else
+			{
+				Player targetsys = L2World.getInstance().getPlayer(requestor.getName());
+				if (targetsys == null)
+					return;
+				
+				targetsys.sendPacket(new CreatureSay(getObjectId(), Say2.TELL, getName(), "?"));
+				
+				sendPacket(new CreatureSay(getObjectId(), Say2.TELL, "->" + targetsys.getName(), "?"));
+			}
+		}
+		else
+			FakePartyManager.getInstance().requestPlayer(requestor, (FakePlayer) target);
 	}
 	
 }

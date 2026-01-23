@@ -8,6 +8,7 @@ import java.util.Set;
 
 import net.sf.l2j.commons.data.xml.IXmlReader;
 import net.sf.l2j.commons.random.Rnd;
+import net.sf.l2j.gameserver.datatables.CharNameTable;
 import net.sf.l2j.gameserver.model.base.Sex;
 
 import org.w3c.dom.Document;
@@ -104,18 +105,23 @@ public class FakeNameData implements IXmlReader
 		final List<String> pool = (sex == Sex.FEMALE) ? _femaleNames : _maleNames;
 		
 		if (pool.isEmpty())
-			return fallback();
+			return fallbackSafe();
 		
-		for (int i = 0; i < pool.size(); i++)
+		for (int i = 0; i < pool.size() * 2; i++)
 		{
 			final String name = pool.get(Rnd.get(pool.size()));
 			
-			if (_usedNames.add(name))
-				return name;
+			if (_usedNames.contains(name))
+				continue;
+			
+			if (CharNameTable.getInstance().getIdByName(name) > 0)
+				continue;
+			
+			_usedNames.add(name);
+			return name;
 		}
 		
-		// todos estão em uso
-		return fallback();
+		return fallbackSafe();
 	}
 	
 	public synchronized void releaseName(String name)
@@ -123,21 +129,25 @@ public class FakeNameData implements IXmlReader
 		_usedNames.remove(name);
 	}
 	
-	private static String fallback()
+	private static String fallbackSafe()
 	{
-		for (int i = 0; i < 50; i++) // tenta algumas vezes
+		for (int i = 0; i < 100; i++)
 		{
 			String name = PREFIX[Rnd.get(PREFIX.length)] + MIDDLE[Rnd.get(MIDDLE.length)] + SUFFIX[Rnd.get(SUFFIX.length)];
 			
-			// Capitalização correta
 			name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
 			
-			if (FakeNameData.getInstance()._usedNames.add(name))
-				return name;
+			if (FakeNameData.getInstance()._usedNames.contains(name))
+				continue;
+			
+			if (CharNameTable.getInstance().getIdByName(name) > 0)
+				continue;
+			
+			FakeNameData.getInstance()._usedNames.add(name);
+			return name;
 		}
 		
-		// Último recurso (quase nunca)
-		return "Player" + Rnd.get(10_000);
+		return "x" + System.currentTimeMillis();
 	}
 	
 	public static FakeNameData getInstance()

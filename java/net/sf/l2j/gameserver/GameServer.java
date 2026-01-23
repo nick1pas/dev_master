@@ -218,13 +218,12 @@ public class GameServer
 		long serverLoadStart = System.currentTimeMillis();
 		IdFactory.getInstance();
 		
-		
 		new File("./data/crests").mkdirs();
 		
 		StringUtil.printSection("World");
 		L2World.getInstance();
 		MapRegionTable.getInstance();
-
+		
 		AnnouncementTable.getInstance();
 		ServerMemo.getInstance();
 		TaskManager.getInstance();
@@ -588,6 +587,7 @@ public class GameServer
 		}
 		
 		StringUtil.printSection("System");
+		printStatus();
 		Runtime.getRuntime().addShutdownHook(Shutdown.getInstance());
 		ForumsBBSManager.getInstance();
 		_log.config("IdFactory: Free ObjectIDs remaining: " + IdFactory.getInstance().size());
@@ -651,42 +651,57 @@ public class GameServer
 		_selectorThread.start();
 		GameListenerManager.getInstance().notifyStart();
 		
-
+	}
+	
+	private static boolean isWindows()
+	{
+		return System.getProperty("os.name").toLowerCase().contains("win");
 	}
 	
 	public static void main(String[] args) throws Exception
 	{
-		if (!GraphicsEnvironment.isHeadless())
-		{
-			System.out.println("World: Running in Interface GUI.");
-			new GameServerLauncher();
-		}
-		
-		final String LOG_FOLDER = "./log"; // Name of folder for log file
-		final String LOG_NAME = "config/log.cfg"; // Name of log file
-		
-		// Create log folder
-		File logFolder = new File(LOG_FOLDER);
-		logFolder.mkdir();
-		
-		// Create input stream for log file -- or store file data into memory
-		InputStream is = new FileInputStream(new File(LOG_NAME));
-		LogManager.getLogManager().readConfiguration(is);
-		is.close();
-		
-		StringUtil.printSection("aCis");
-		// Initialize config
-		Config.loadGameServer();
-		
-		// Factories
-		XMLDocumentFactory.getInstance();
-		ConnectionPool.init();
-		
-		BalanceManager.load();
-		ThreadPool.init();
-		gameServer = new GameServer();
-		
+	    if (isWindows())
+	    {
+	        try
+	        {
+	            if (!GraphicsEnvironment.isHeadless())
+	            {
+	                System.out.println("World: Running in Interface GUI.");
+	                new GameServerLauncher();
+	            }
+	        }
+	        catch (Throwable t)
+	        {
+	            // ignora completamente GUI
+	        }
+	    }
+
+	    startServer();
 	}
+	
+	private static void startServer() throws Exception
+	{
+	    final String LOG_FOLDER = "./log";
+	    final String LOG_NAME = "config/log.cfg";
+
+	    new File(LOG_FOLDER).mkdir();
+
+	    try (InputStream is = new FileInputStream(LOG_NAME))
+	    {
+	        LogManager.getLogManager().readConfiguration(is);
+	    }
+
+	    StringUtil.printSection("Master");
+
+	    Config.loadGameServer();
+	    XMLDocumentFactory.getInstance();
+	    ConnectionPool.init();
+	    BalanceManager.load();
+	    ThreadPool.init();
+
+	    gameServer = new GameServer();
+	}
+
 	
 	public static void printStatus()
 	{

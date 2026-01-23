@@ -16,17 +16,18 @@ public class PrivateMessageManager
 		private final String senderName;
 		private final String text;
 		private final long time;
-		
+		private final int _type;
 		private boolean seen;
 		private boolean answered;
 		
-		public PrivateMessage(int senderId, int receiverId, String senderName, String text)
+		public PrivateMessage(int senderId, int receiverId, String senderName, String text, int type)
 		{
 			this.senderId = senderId;
 			this.receiverId = receiverId;
 			this.senderName = senderName;
 			this.text = text;
 			this.time = System.currentTimeMillis();
+			this._type = type;
 		}
 		
 		public int getSenderId()
@@ -73,6 +74,11 @@ public class PrivateMessageManager
 		{
 			answered = true;
 		}
+		
+		public int getTypeId()
+		{
+			return _type;
+		}
 	}
 	
 	private final Map<Integer, List<PrivateMessage>> _messages = new ConcurrentHashMap<>();
@@ -82,9 +88,9 @@ public class PrivateMessageManager
 		return SingletonHolder.INSTANCE;
 	}
 	
-	public void onTell(Player sender, Player receiver, String text)
+	public void onTell(Player sender, Player receiver, String text, int type)
 	{
-		PrivateMessage msg = new PrivateMessage(sender.getObjectId(), receiver.getObjectId(), sender.getName(), text);
+		PrivateMessage msg = new PrivateMessage(sender.getObjectId(), receiver.getObjectId(), sender.getName(), text, type);
 		
 		_messages.computeIfAbsent(receiver.getObjectId(), k -> new CopyOnWriteArrayList<>()).add(msg);
 		

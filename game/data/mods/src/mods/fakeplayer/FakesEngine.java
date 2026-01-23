@@ -12,6 +12,7 @@ import mods.fakeplayer.data.FakePlayerData;
 import mods.fakeplayer.data.FakePrivateBuyData;
 import mods.fakeplayer.data.FakePrivateSellData;
 import mods.fakeplayer.engine.FakePlayerRestoreEngine;
+import mods.fakeplayer.gui.PhantomPanel;
 import mods.fakeplayer.task.FakePlayerAiEngine;
 
 public class FakesEngine implements L2JMod
@@ -25,7 +26,7 @@ public class FakesEngine implements L2JMod
 		loadData();
 		registerAdmin();
 		FakePlayerAiEngine.start();
-		
+		new PhantomPanel();
 	}
 	
 	@Override

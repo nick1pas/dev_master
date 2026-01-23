@@ -21,21 +21,23 @@ public class FakeChatData implements IXmlReader
 		ANY,
 		CITY,
 		FARM,
-		COMBAT
+		COMBAT,
+		DEAD
 	}
+	
 	public final static class ChatTypeResolver
 	{
 		private ChatTypeResolver()
 		{
 		}
-
+		
 		public static int resolve(String name)
 		{
 			if (name == null)
 				return Say2.ALL;
-
+			
 			String normalized = name.toUpperCase();
-
+			
 			// Aliases amigáveis para XML
 			switch (normalized)
 			{
@@ -43,28 +45,32 @@ public class FakeChatData implements IXmlReader
 				case "HERO_VOICE":
 				case "HEROCHAT":
 					return Say2.HERO_VOICE;
-
+				
 				case "TELL":
 					return Say2.TELL;
-
+				
 				case "ALL":
 					return Say2.ALL;
-
+				
 				case "TRADE":
 					return Say2.TRADE;
+					
+				case "GLOBAL":
+					return Say2.SHOUT;
 			}
-
+			
 			// fallback pelo CHAT_NAMES oficial
 			for (int i = 0; i < Say2.CHAT_NAMES.length; i++)
 			{
 				if (Say2.CHAT_NAMES[i].equalsIgnoreCase(normalized))
 					return i;
 			}
-
+			
 			throw new IllegalArgumentException("Invalid chat type: " + name);
 		}
-
+		
 	}
+	
 	private static class ChatGroup
 	{
 		final int chance;

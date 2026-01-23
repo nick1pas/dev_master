@@ -57,10 +57,7 @@ public enum FakeTeleportPoint
 	
 	HORUS_I("Horus I", 102488, -38488, -1502, Type.FIELD),
 	HORUS_II("Horus II", 109928, -41464, -2320, Type.FIELD),
-	
-	PRIMEVAL_ZONE_I("Primeval Zone I", 10468, -24569, -3645, Type.FIELD),
-	PRIMEVAL_ZONE_II("Primeval Zone II", 8136, -23480, -3696, Type.FIELD),
-	PRIMEVAL_ZONE_III("Primeval Zone III", 9320, -21688, -3632, Type.FIELD),
+ 
 	
 	VARKA_SILENOS_I("Varka Silenos I", 125976, -40760, -3752, Type.FIELD),
 	VARKA_SILENOS_II("Varka Silenos II", 122888, -45736, -3032, Type.FIELD),

@@ -73,7 +73,7 @@ public interface ITargetSelect
 		if (target == null || target.isDead())
 			return false;
 		
-		if (!player.isInsideRadius(target, AGGRO_RANGE, true, false))
+		if (!player.isInsideRadius(target, AGGRO_RANGE, false, false))
 			return false;
 		
 		if (Util.calculateDistance(player, target, false) > AGGRO_RANGE * 0.9)
@@ -193,7 +193,7 @@ public interface ITargetSelect
 			if (mob == null || mob.isDead())
 				continue;
 			
-			if (!player.isInsideRadius(mob, AGGRO_RANGE, true, false))
+			if (!player.isInsideRadius(mob, AGGRO_RANGE, false, false))
 				continue;
 			
 			// 🔥 REGRA 1: Se o mob me atacou, SEMPRE revidar
@@ -245,7 +245,7 @@ public interface ITargetSelect
 					continue;
 			}
 			
-			if (!player.isInsideRadius(other, AGGRO_RANGE, true, false))
+			if (!player.isInsideRadius(other, AGGRO_RANGE, false, false))
 				continue;
 			
 			double dist = Util.calculateDistance(player, other, false);
@@ -266,7 +266,7 @@ public interface ITargetSelect
 			if (mob == null || mob.isDead())
 				continue;
 			
-			if (!player.isInsideRadius(mob, AGGRO_RANGE, true, false))
+			if (!player.isInsideRadius(mob, AGGRO_RANGE, false, false))
 				continue;
 			
 			if (mob.getHateList().contains(player))

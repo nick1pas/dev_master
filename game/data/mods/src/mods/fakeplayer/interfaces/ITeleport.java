@@ -1,5 +1,6 @@
 package mods.fakeplayer.interfaces;
 
+import net.sf.l2j.Config;
 import net.sf.l2j.commons.random.Rnd;
 import net.sf.l2j.gameserver.ThreadPool;
 import net.sf.l2j.gameserver.model.Location;
@@ -11,7 +12,7 @@ import mods.fakeplayer.enums.FakeTeleportPoint;
 import mods.fakeplayer.spawn.FakeSpawnResolver;
 import mods.fakeplayer.spawn.SpawnPointGenerator;
 
-public interface ITeleportTown
+public interface ITeleport
 {
 	/* ===================== MEMOS ===================== */
 	String VAR_CITY_STATE = "fake_city_state";
@@ -178,11 +179,14 @@ public interface ITeleportTown
 		memos.set(VAR_TELEPORT_CASTING, true);
 		memos.hasChanges();
 		fake.setIsImmobilized(true);
-		// Efeito visual
-		MagicSkillUse msu = new MagicSkillUse(fake, fake, 2036, 1, TELEPORT_CAST_TIME, 0);
-		fake.broadcastPacket(msu, 1500);
-		fake.sendPacket(msu);
 		
+		if (Config.OPEN_EFFECT_CLASSIC_TELEPORTER)
+		{
+			// Efeito visual
+			MagicSkillUse msu = new MagicSkillUse(fake, fake, 2036, 1, TELEPORT_CAST_TIME, 0);
+			fake.broadcastPacket(msu, 1500);
+			fake.sendPacket(msu);
+		}
 		// Agenda o teleport após a animação
 		ThreadPool.schedule(() -> {
 			// Segurança extra

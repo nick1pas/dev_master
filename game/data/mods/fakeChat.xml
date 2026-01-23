@@ -61,7 +61,13 @@
 					<msg>so no grind</msg>
 				</group>
 			</context>
-		</language>
+			<context id="DEAD">
+				<group chance="70">
+					<msg>im fuck you!</msg>
+
+				</group>
+			</context>
+			</language>
 
 		<language id="en_GB">
 			<context id="ANY">

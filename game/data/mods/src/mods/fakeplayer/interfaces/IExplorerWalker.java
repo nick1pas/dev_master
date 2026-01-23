@@ -15,7 +15,7 @@ import mods.fakeplayer.enums.ExplorerContext;
 
 public interface IExplorerWalker
 {
-	static final long GLOBAL_CHAT_COOLDOWN = 1000 * 60; // 1 minuto
+	static final long GLOBAL_CHAT_COOLDOWN = 1000 * 15; // 1 minuto
 	
 	/* =============================== STATE =============================== */
 	
@@ -252,7 +252,7 @@ public interface IExplorerWalker
 			
 			int x = fake.getX() + (int) (Math.cos(angle) * dist);
 			int y = fake.getY() + (int) (Math.sin(angle) * dist);
-			int z = GeoEngine.getInstance().getHeight(x, y, fake.getZ());
+			int z = fake.getZ();
 			
 			if (GeoEngine.getInstance().canMoveToTarget(fake.getX(), fake.getY(), fake.getZ(), x, y, z))
 				return new Location(x, y, z);
@@ -275,7 +275,7 @@ public interface IExplorerWalker
 		
 		int x = fake.getX() + (int) (Math.cos(angle) * step);
 		int y = fake.getY() + (int) (Math.sin(angle) * step);
-		int z = GeoEngine.getInstance().getHeight(x, y, fake.getZ());
+		int z = fake.getZ();
 		
 		if (!GeoEngine.getInstance().canMoveToTarget(fake.getX(), fake.getY(), fake.getZ(), x, y, z))
 			return null;

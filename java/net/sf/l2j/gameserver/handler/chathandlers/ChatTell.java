@@ -48,7 +48,7 @@ public class ChatTell implements IChatHandler
 		
 		receiver.sendPacket(new CreatureSay(activeChar.getObjectId(), type, activeChar.getName(), text));
 		activeChar.sendPacket(new CreatureSay(activeChar.getObjectId(), type, "->" + receiver.getName(), text));
-		PrivateMessageManager.getInstance().onTell(activeChar, receiver, text);
+		PrivateMessageManager.getInstance().onTell(activeChar, receiver, text, type);
 	}
 	
 	@Override

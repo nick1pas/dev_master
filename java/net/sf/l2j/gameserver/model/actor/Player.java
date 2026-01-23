@@ -14139,4 +14139,9 @@ public class Player extends Playable
 	{
 		// Player real: nada automático
 	}
+	
+	public void setPartyInvite(Player requestor, Player target)
+	{
+	
+	}
 }
