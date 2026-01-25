@@ -10,7 +10,7 @@ public interface IPartyRange
 	String VAR_LAST_PARTY_FOLLOW = "fake_last_party_follow";
 	long PARTY_FOLLOW_COOLDOWN = 1000L; // 4 segundos
 	
-	int PARTY_COMFORT_RANGE = 1010;
+	int PARTY_COMFORT_RANGE = 400;
 	int PARTY_MAX_RANGE = 1500;
 	
 	default void handlePartyCohesion(FakePlayer player)
@@ -28,7 +28,6 @@ public interface IPartyRange
 		if (now - lastFollow < PARTY_FOLLOW_COOLDOWN)
 			return;
 		
-		// Distância atual
 		double distance = player.getDistanceSq(leader);
 		
 		if (distance <= PARTY_COMFORT_RANGE)
@@ -36,16 +35,13 @@ public interface IPartyRange
 		
 		if (distance > PARTY_MAX_RANGE)
 		{
-			player.getAI().startFollow(leader, PARTY_COMFORT_RANGE - 100);
-			memos.set(VAR_LAST_PARTY_FOLLOW, now);
+			if (Rnd.get(100) < 40)
+			{
+				player.getAI().startFollow(leader, PARTY_COMFORT_RANGE - 100);
+				memos.set(VAR_LAST_PARTY_FOLLOW, now);
+			}
 			return;
 		}
 		
-		// Zona intermediária → chance de seguir (comportamento humano)
-		if (Rnd.get(100) < 40)
-		{
-			player.getAI().startFollow(leader, PARTY_COMFORT_RANGE - 100);
-			memos.set(VAR_LAST_PARTY_FOLLOW, now);
-		}
 	}
 }

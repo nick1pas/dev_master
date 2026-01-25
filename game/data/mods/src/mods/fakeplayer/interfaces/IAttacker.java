@@ -29,7 +29,7 @@ public interface IAttacker
 	double MAGE_CAST_RANGE_SQ = 900 * 900;
 	int PARTY_ATTACK_COMFORT_RANGE = 650;
 	int PARTY_ATTACK_MAX_RANGE = 1000;
-
+	
 	/* ========================= */
 	/* ===== ENTRY POINT ======= */
 	/* ========================= */
@@ -50,7 +50,6 @@ public interface IAttacker
 			fakePlayer.abortCast();
 			return;
 		}
-		
 		
 		if (!isTargetValid(fakePlayer, target))
 		{
@@ -90,7 +89,6 @@ public interface IAttacker
 	{
 		FakePlayer player = ai.getPlayer();
 		
-
 		if (!ai.canReposition())
 		{
 			tryMageCast(ai, target);
@@ -276,8 +274,8 @@ public interface IAttacker
 		
 		if (!moveOrCheckRange(player, target, range))
 			return;
-		
-		player.doAttack(target);
+		if (!player.isCastingNow())
+			player.doAttack(target);
 	}
 	
 	private static void attackWithDagger(CombatBehaviorAI ai, Creature target)
@@ -413,29 +411,30 @@ public interface IAttacker
 		
 		return true;
 	}
+	
 	default boolean shouldWaitForParty(FakePlayer player)
 	{
 		if (player.getParty() == null)
 			return false;
-
+		
 		Player leader = player.getParty().getLeader();
 		if (leader == null || leader == player)
 			return false;
-
+		
 		double distSq = player.getDistanceSq(leader);
-
+		
 		// Muito longe → SEMPRE espera
 		if (distSq > PARTY_ATTACK_MAX_RANGE * PARTY_ATTACK_MAX_RANGE)
 			return true;
-
+		
 		// Zona intermediária → chance de esperar
 		if (distSq > PARTY_ATTACK_COMFORT_RANGE * PARTY_ATTACK_COMFORT_RANGE)
 		{
 			// 65% de chance de esperar
 			return Rnd.get(100) < 65;
 		}
-
+		
 		return false;
 	}
-
+	
 }

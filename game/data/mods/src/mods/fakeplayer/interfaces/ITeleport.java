@@ -29,9 +29,6 @@ public interface ITeleport
 	long FIELD_MIN_TIME = 1000L * 60 * 45;
 	long FIELD_MAX_TIME = 1000L * 60 * 60;
 	
-	// Tempo de inatividade para forçar retorno à cidade (padrão 30 minutos)
-	long INACTIVITY_TIMEOUT_MS = 1000L * 60;
-	
 	enum CityState
 	{
 		NONE,
@@ -48,43 +45,11 @@ public interface ITeleport
 		var memos = fake.getMemos();
 		
 		/* --------- BLOQUEIOS GLOBAIS --------- */
-		if (fake.isDead() || fake.isBusy() || fake.isPickingUp())
+		if (fake.isDead() || fake.isPickingUp())
 			return;
 		
 		if (fake.isPrivateBuying() || fake.isPrivateSelling() || fake.isPrivateManufactureing())
-		{
-			memos.set(VAR_CITY_LAST_ACTION, now);
-			memos.hasChanges();
 			return;
-		}
-		
-		// Atualiza o último timestamp de ação quando o fake está realizando alguma atividade
-		boolean performingAction = fake.isMoving() || fake.isInCombat() || fake.isPrivateBuying() || fake.isPrivateSelling() || fake.isPrivateManufactureing() || fake.isPickingUp() || fake.isCastingNow();
-		if (performingAction)
-		{
-			memos.set(VAR_CITY_LAST_ACTION, now);
-			memos.hasChanges();
-		}
-		
-		// Checa inatividade: se ficou muito tempo sem nenhuma ação e está fora da cidade, força retorno
-		long lastAction = memos.getLong(VAR_CITY_LAST_ACTION, now);
-		if (!fake.isInsideZoneTown() && (now - lastAction) > INACTIVITY_TIMEOUT_MS)
-		{
-			// Evita repetir se já estiver preparando teleport
-			if (!memos.getBool(VAR_TELEPORT_CASTING, false))
-			{
-				memos.set(VAR_CITY_STATE, CityState.IN_CITY.name());
-				memos.set(VAR_CITY_ENTER, now);
-				memos.set(VAR_CITY_LAST_ACTION, now);
-				memos.set(VAR_CITY_TARGET_STAY, Rnd.get(CITY_MIN_STAY, CITY_MAX_STAY));
-				memos.hasChanges();
-				
-				// Teleporta para uma cidade aleatória
-				FakeTeleportPoint city = FakeTeleportPoint.getRandomCity();
-				castTeleportAndThen(fake, new Location(city.getLocation().getX(), city.getLocation().getY(), city.getLocation().getZ()));
-				return;
-			}
-		}
 		
 		CityState state = CityState.valueOf(memos.getString(VAR_CITY_STATE, CityState.NONE.name()));
 		
@@ -164,14 +129,14 @@ public interface ITeleport
 			
 		}
 	}
-
+	
 	/* ===================== HELPERS ===================== */
 	
 	private static void teleportOutOfTown(FakePlayer fake)
 	{
 		if (isThirdClass(fake.getClassId().getId()))
 		{
-			FakeTeleportPoint dest = (Rnd.get(100) >= 90) ? FakeTeleportPoint.getRandomArena() : FakeTeleportPoint.getRandomField();
+			FakeTeleportPoint dest = FakeTeleportPoint.getRandomField();
 			castTeleportAndThen(fake, new Location(dest.getLocation().getX(), dest.getLocation().getY(), dest.getLocation().getZ()));
 			return;
 		}
@@ -203,7 +168,6 @@ public interface ITeleport
 	{
 		var memos = fake.getMemos();
 		
-		// Já está teleportando → ignora
 		if (memos.getBool(VAR_TELEPORT_CASTING, false))
 			return;
 		
@@ -218,7 +182,7 @@ public interface ITeleport
 			fake.broadcastPacket(msu, 1500);
 			fake.sendPacket(msu);
 		}
-		// Agenda o teleport após a animação
+		
 		ThreadPool.schedule(() -> {
 			// Segurança extra
 			if (fake.isDead())

@@ -44,10 +44,9 @@ public abstract class CombatBehaviorAI extends AbstractFakePlayerAI implements I
 	protected long lastBackstabTry = 0;
 	protected long _lastChatTime = 0;
 	protected long nextArcherDecision = 0;
-	protected long ARCHER_DECISION_DELAY = 700; // ms
-	
+	protected long ARCHER_DECISION_DELAY = 1500; // ms
 	protected Set<String> _usedResponses = new HashSet<>();
-	private final Set<String> _used = new HashSet<>();
+	protected final Set<String> _used = new HashSet<>();
 	
 	public CombatBehaviorAI(FakePlayer character)
 	{
@@ -65,7 +64,6 @@ public abstract class CombatBehaviorAI extends AbstractFakePlayerAI implements I
 		HandlerTeleport(_fakePlayer);
 		handleTvTRegister(_fakePlayer);
 		handleTownActivity(_fakePlayer);
-		
 	}
 	
 	public void clearTarget()
@@ -96,6 +94,8 @@ public abstract class CombatBehaviorAI extends AbstractFakePlayerAI implements I
 	
 	public abstract CombatKit getCombatKit();
 	
+	public abstract SkillCombo getCombatCombo();
+	
 	protected int getArrowId()
 	{
 		int playerLevel = _fakePlayer.getLevel();
@@ -114,8 +114,6 @@ public abstract class CombatBehaviorAI extends AbstractFakePlayerAI implements I
 			
 		return 0;
 	}
-	
-	public abstract SkillCombo getCombatCombo();
 	
 	protected L2Skill getBestSkill(int skillId)
 	{

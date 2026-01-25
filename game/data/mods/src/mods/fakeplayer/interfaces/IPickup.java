@@ -24,8 +24,8 @@ public interface IPickup
 		3470, // Gold Bar
 		6392, // Glittering Medal
 		6393, // Glittering Medal
-		5575, // Festival Adena (ajuste se necessário)
-		5574 // Ancient Adena (ajuste se necessário)
+		5575, // Festival Adena
+		5574 // Ancient Adena
 	);
 	
 	default boolean handlePickUp(FakePlayer fake)
@@ -145,6 +145,8 @@ public interface IPickup
 		
 		switch (item.getItem().getCrystalType())
 		{
+			case D:
+			case B:
 			case C:
 			case A:
 			case S:

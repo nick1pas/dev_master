@@ -141,7 +141,6 @@ public class FakePlayer extends Player
 	public FakePlayer(int objectId, PcTemplate template, String accountName, PcAppearance app)
 	{
 		super(objectId, template, accountName, app);
-		
 	}
 	
 	public AbstractFakePlayerAI getFakeAi()
@@ -578,6 +577,7 @@ public class FakePlayer extends Player
 		{
 			player.setTarget(this);
 			player.sendPacket(ActionFailed.STATIC_PACKET);
+			
 		}
 		else
 			player.sendPacket(ActionFailed.STATIC_PACKET);
@@ -585,17 +585,73 @@ public class FakePlayer extends Player
 	
 	private void showFakePanel(Player gm)
 	{
+		// Build HTML programmatically to avoid external file dependency and allow
+		// finer control over layout and escaping of dynamic values.
 		NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
-		html.setFile("data/mods/html/admin/fake_player_panel.htm");
 		
-		html.replace("%name%", getName());
-		html.replace("%level%", String.valueOf(getLevel()));
-		html.replace("%Town%", String.valueOf(getCurrentTownName()));
-		html.replace("%class%", getTemplate().getClassName());
-		html.replace("%status%", getCurrentAction());
-		html.replace("%objectId%", String.valueOf(getObjectId()));
+		StringBuilder sb = new StringBuilder(512);
+		sb.append("<html><body>");
+		sb.append("<center><table width=300 cellpadding=4 cellspacing=0>");
+		sb.append("<tr><td align=center><font color=LEVEL><b>FakePlayer Panel</b></font></td></tr>");
+		sb.append("<tr><td>");
 		
+		sb.append("<table width=100%>");
+		sb.append("<tr><td width=30%><b>Name:</b></td><td>").append(escapeHtml(getName())).append("</td></tr>");
+		sb.append("<tr><td><b>Level:</b></td><td>").append(getLevel()).append("</td></tr>");
+		sb.append("<tr><td><b>Town:</b></td><td>").append(escapeHtml(String.valueOf(getCurrentTownName()))).append("</td></tr>");
+		sb.append("<tr><td><b>Class:</b></td><td>").append(escapeHtml(getTemplate().getClassName())).append("</td></tr>");
+		sb.append("<tr><td><b>Status:</b></td><td>").append(escapeHtml(getCurrentAction())).append("</td></tr>");
+		sb.append("</table>");
+		
+		sb.append("</td></tr>");
+		
+		sb.append("<tr><td align=center>");
+		// Center controls
+		sb.append("<button value=\"Teleport Here\" action=\"bypass -h admin_fake_tp ").append(getObjectId()).append("\" width=120 height=20>");
+		sb.append("&nbsp;");
+		sb.append("<button value=\"Go To\" action=\"bypass -h admin_fake_go ").append(getObjectId()).append("\" width=80 height=20>");
+		sb.append("&nbsp;");
+		sb.append("<button value=\"Despawn\" action=\"bypass -h admin_fake_despawn ").append(getObjectId()).append("\" width=80 height=20>");
+		sb.append("</td></tr>");
+		
+		sb.append("</table></center>");
+		sb.append("</body></html>");
+		
+		html.setHtml(sb.toString());
 		gm.sendPacket(html);
+	}
+	
+	// Simple HTML escaper for dynamic values inserted into generated HTML.
+	private static String escapeHtml(String s)
+	{
+		if (s == null)
+			return "";
+		StringBuilder out = new StringBuilder(s.length());
+		for (int i = 0; i < s.length(); i++)
+		{
+			char c = s.charAt(i);
+			switch (c)
+			{
+				case '<':
+					out.append("&lt;");
+					break;
+				case '>':
+					out.append("&gt;");
+					break;
+				case '&':
+					out.append("&amp;");
+					break;
+				case '"':
+					out.append("&quot;");
+					break;
+				case '\'':
+					out.append("&#x27;");
+					break;
+				default:
+					out.append(c);
+			}
+		}
+		return out.toString();
 	}
 	
 	public void assignDefaultAI()

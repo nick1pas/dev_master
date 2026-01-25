@@ -25,31 +25,31 @@ public class VoicedRanking implements IVoicedCommandHandler
 		"pks",
 		"clan",
 		"ranking",
-		//"clanpoint",
+		// "clanpoint",
 		"pvpEvent",
 		"pvpevent"
 	};
-
+	
 	@Override
 	public boolean useVoicedCommand(String command, Player activeChar, String target)
 	{
 		if (command.equals("ranking"))
-			showRankingHtml(activeChar);      
+			showRankingHtml(activeChar);
 		
 		if ((command.equals("pvpEvent") || command.equals("pvpevent")) && Config.PVP_EVENT_ENABLED)
 		{
-			PvPEvent.getTopHtml(activeChar); 
+			PvPEvent.getTopHtml(activeChar);
 		}
 		if (command.equals("pvp"))
 		{
 			NpcHtmlMessage htm = new NpcHtmlMessage(5);
 			StringBuilder tb = new StringBuilder("<html><head><title>Ranking PvP</title></head><body><center><img src=\"l2ui_ch3.herotower_deco\" width=256 height=32></center><br1><table width=290><tr><td><center>Rank</center></td><td><center>Character</center></td><td><center>Pvp's</center></td><td><center>Status</center></td></tr>");
-	        try (Connection con = ConnectionPool.getConnection())
-            {
+			try (Connection con = ConnectionPool.getConnection())
+			{
 				PreparedStatement statement = con.prepareStatement("SELECT char_name,pvpkills,online FROM characters WHERE pvpkills>0 AND accesslevel=0 order by pvpkills desc limit 15");
 				ResultSet result = statement.executeQuery();
 				int pos = 0;
-
+				
 				while (result.next())
 				{
 					String pvps = result.getString("pvpkills");
@@ -63,17 +63,17 @@ public class VoicedRanking implements IVoicedCommandHandler
 					else
 						status = "<font color=FF0000>Offline</font>";
 					
-					tb.append("<tr><td><center><font color =\"AAAAAA\">" +pos+ "</td><td><center><font color=00FFFF>" +name+ "</font></center></td><td><center>" +pvps+ "</center></td><td><center>" +status+ "</center></td></tr>");
+					tb.append("<tr><td><center><font color =\"AAAAAA\">" + pos + "</td><td><center><font color=00FFFF>" + name + "</font></center></td><td><center>" + pvps + "</center></td><td><center>" + status + "</center></td></tr>");
 				}
 				statement.close();
 				result.close();
 				con.close();
 			}
-	        catch (Exception e)
+			catch (Exception e)
 			{
-				//_log.log(Level.WARNING, "ranking (status): could not load statistics informations" + e.getMessage(), e);
-			}        
-	        tb.append("</table>");
+				// _log.log(Level.WARNING, "ranking (status): could not load statistics informations" + e.getMessage(), e);
+			}
+			tb.append("</table>");
 			tb.append("<br>");
 			tb.append("<br>");
 			tb.append("<center><a action=\"bypass voiced_ranking\">Back to Rankings</a>");
@@ -87,12 +87,12 @@ public class VoicedRanking implements IVoicedCommandHandler
 		{
 			NpcHtmlMessage htm = new NpcHtmlMessage(5);
 			StringBuilder tb = new StringBuilder("<html><head><title>Ranking PK</title></head><body><center><img src=\"l2ui_ch3.herotower_deco\" width=256 height=32></center><br1><table width=290><tr><td><center>Rank</center></td><td><center>Character</center></td><td><center>Pk's</center></td><td><center>Status</center></td></tr>");
-	        try (Connection con = ConnectionPool.getConnection())
-            {
+			try (Connection con = ConnectionPool.getConnection())
+			{
 				PreparedStatement statement = con.prepareStatement("SELECT char_name,pkkills,online FROM characters WHERE pvpkills>0 AND accesslevel=0 order by pkkills desc limit 15");
 				ResultSet result = statement.executeQuery();
 				int pos = 0;
-
+				
 				while (result.next())
 				{
 					String pks = result.getString("pkkills");
@@ -106,16 +106,16 @@ public class VoicedRanking implements IVoicedCommandHandler
 					else
 						status = "<font color=FF0000>Offline</font>";
 					
-					tb.append("<tr><td><center><font color =\"AAAAAA\">" +pos+ "</td><td><center><font color=00FFFF>" +name+ "</font></center></td><td><center>" +pks+ "</center></td><td><center>" +status+ "</center></td></tr>");
+					tb.append("<tr><td><center><font color =\"AAAAAA\">" + pos + "</td><td><center><font color=00FFFF>" + name + "</font></center></td><td><center>" + pks + "</center></td><td><center>" + status + "</center></td></tr>");
 				}
 				statement.close();
 				result.close();
 				con.close();
 			}
-	        catch (Exception e)
+			catch (Exception e)
 			{
-				//_log.log(Level.WARNING, "ranking (status): could not load statistics informations" + e.getMessage(), e);
-			}        
+				// _log.log(Level.WARNING, "ranking (status): could not load statistics informations" + e.getMessage(), e);
+			}
 			
 			tb.append("</table>");
 			tb.append("<br>");
@@ -127,163 +127,68 @@ public class VoicedRanking implements IVoicedCommandHandler
 			activeChar.sendPacket(htm);
 		}
 		
-	
-		
-		/*if (command.equals("clanpoint"))
+		if (command.equals("clan") && ClanRankingConfig.ENABLE_CLAN_RANKING)
 		{
 			NpcHtmlMessage htm = new NpcHtmlMessage(0);
-			StringBuilder tb = new StringBuilder("<html><head><title>Clan Ranking</title></head><body><center><img src=\"l2ui_ch3.herotower_deco\" width=256 height=32></center><br1><table width=290><tr><td><center>Rank</center></td><td><center>Clan Name</center></td><td><center>Raid Point(s)</center></td><td><center>Castle Point(s)</center></td></tr>");
-
+			StringBuilder tb = new StringBuilder("<html><head><title>Clan Ranking</title></head><body><table width=80><tr><td><button value=\"\" action=\"bypass voiced_ranking \" width=35 height=23 back=\"L2UI_CH3.calculate2_bs_down\" fore=\"L2UI_CH3.calculate2_bs\"></td><td> Back </td></tr></table><br><center>Next Rewarding: <font color=LEVEL>" + TaskClanRankingReward.getTimeToDate() + "</font><br1><table width=290><tr><td><center>Rank</center></td><td><center>Clan Name</center></td><td><center>Raid Point(s)</center></td><td><center>Castle Point(s)</center></td></tr>");
+			
 			try (Connection con = ConnectionPool.getConnection())
-            {
-				PreparedStatement statement = con.prepareStatement("SELECT clan_id, boss_points, siege_points FROM clan_points WHERE ((boss_points + siege_points)>0) ORDER BY (boss_points + siege_points) desc LIMIT 10");
-				ResultSet result = statement.executeQuery();
-				int pos = 0;
-
-				while (result.next())
-				{
-					String raid = result.getString("boss_points");
-					String castle = result.getString("siege_points");
-					String owner = result.getString("clan_id");
-					pos += 1;
-					
-					PreparedStatement charname = con.prepareStatement("SELECT clan_name FROM clan_data WHERE clan_id=" + owner);
-					@SuppressWarnings("resource")
-					ResultSet result2 = charname.executeQuery();
-					
-					while (result2.next())
-					{
-						String char_name = result2.getString("clan_name");
-
-						tb.append("<tr><td><center>" +pos+ "</center></td><td><center><font color=LEVEL>" +char_name+"</center></td><td><center><font color=00FFFF>" +raid+ "</font></center></td><td><center><font color=00FF00>" +castle+ "</font></center></td></tr>");
-					}
-					charname.close();
-				}
-				statement.close();
-				result.close();
-				con.close();
-			}
-	        catch (Exception e)
 			{
-	        	//_log.warning("Error: could not restore clan_points ranking data info: " + e);
-	        	//e.printStackTrace();
-			}   
-	        tb.append("</table><br>");
-			tb.append("<center><a action=\"bypass -h voiced_ranking\">Back</a></center>");
+				// Usando try-with-resources para PreparedStatement e ResultSet
+				try (PreparedStatement statement = con.prepareStatement("SELECT clan_id, boss_points, siege_points FROM clan_points WHERE ((boss_points + siege_points)>0) ORDER BY (boss_points + siege_points) desc LIMIT 15"); ResultSet result = statement.executeQuery())
+				{
+					
+					int pos = 0;
+					while (result.next())
+					{
+						String raid = result.getString("boss_points");
+						String castle = result.getString("siege_points");
+						String owner = result.getString("clan_id");
+						pos += 1;
+						
+						// Usando try-with-resources para PreparedStatement e ResultSet dentro deste bloco
+						try (PreparedStatement charname = con.prepareStatement("SELECT clan_name FROM clan_data WHERE clan_id=" + owner); ResultSet result2 = charname.executeQuery())
+						{
+							
+							while (result2.next())
+							{
+								String clan_name = result2.getString("clan_name");
+								
+								// Lógica de formatação do nome do clã
+								if (clan_name.equals("WWWWWWWWWWWWWWWW") || clan_name.equals("WWWWWWWWWWWWWWW") || clan_name.equals("WWWWWWWWWWWWWW") || clan_name.equals("WWWWWWWWWWWWW") || clan_name.equals("WWWWWWWWWWWW") || clan_name.equals("WWWWWWWWWWW") || clan_name.equals("WWWWWWWWWW") || clan_name.equals("WWWWWWWWW") || clan_name.equals("WWWWWWWW") || clan_name.equals("WWWWWWW") || clan_name.equals("WWWWWW"))
+									clan_name = clan_name.substring(0, 3) + "..";
+								else if (clan_name.length() > 14)
+									clan_name = clan_name.substring(0, 14) + "..";
+								
+								tb.append("<tr><td><center>" + pos + "</center></td><td><center><font color=LEVEL>" + clan_name + "</font></center></td><td><center><font color=00FFFF>" + raid + "</font></center></td><td><center><font color=00FF00>" + castle + "</font></center></td></tr>");
+							}
+						}
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				_log.warning("Error: could not restore clan_points ranking data info: " + e);
+				e.printStackTrace();
+			}
+			
+			tb.append("</table>");
 			tb.append("</body></html>");
-
+			
 			htm.setHtml(tb.toString());
 			activeChar.sendPacket(htm);
-		}*/
-		//else if (command.equalsIgnoreCase("event_ranking"))
-		//	PlayerOfTheHour.getInstance().getHtml(activeChar);
-//		if (command.equals("clan") && ClanRankingConfig.ENABLE_CLAN_RANKING)
-//		{
-//			NpcHtmlMessage htm = new NpcHtmlMessage(0);
-//			StringBuilder tb = new StringBuilder("<html><head><title>Clan Ranking</title></head><body><table width=80><tr><td><button value=\"\" action=\"bypass voiced_ranking \" width=35 height=23 back=\"L2UI_CH3.calculate2_bs_down\" fore=\"L2UI_CH3.calculate2_bs\"></td><td> Back </td></tr></table><br><center>Next Rewarding: <font color=LEVEL>" + TaskClanRankingReward.getTimeToDate() +"</font><br1><table width=290><tr><td><center>Rank</center></td><td><center>Clan Name</center></td><td><center>Raid Point(s)</center></td><td><center>Castle Point(s)</center></td></tr>");
-//			
-//			try (Connection con = ConnectionPool.getConnection())
-//			{
-//				PreparedStatement statement = con.prepareStatement("SELECT clan_id, boss_points, siege_points FROM clan_points WHERE ((boss_points + siege_points)>0) ORDER BY (boss_points + siege_points) desc LIMIT 15");
-//				ResultSet result = statement.executeQuery();
-//				int pos = 0;
-//				
-//				while (result.next())
-//				{
-//					String raid = result.getString("boss_points");
-//					String castle = result.getString("siege_points");
-//					String owner = result.getString("clan_id");
-//					pos += 1;
-//					
-//					PreparedStatement charname = con.prepareStatement("SELECT clan_name FROM clan_data WHERE clan_id=" + owner);
-//					ResultSet result2 = charname.executeQuery();
-//					
-//					while (result2.next())
-//					{
-//						String clan_name = result2.getString("clan_name");
-//						
-//						if (clan_name.equals("WWWWWWWWWWWWWWWW") || clan_name.equals("WWWWWWWWWWWWWWW") || clan_name.equals("WWWWWWWWWWWWWW") || clan_name.equals("WWWWWWWWWWWWW") || clan_name.equals("WWWWWWWWWWWW") || clan_name.equals("WWWWWWWWWWW") || clan_name.equals("WWWWWWWWWW") || clan_name.equals("WWWWWWWWW") || clan_name.equals("WWWWWWWW") || clan_name.equals("WWWWWWW") || clan_name.equals("WWWWWW"))
-//							clan_name = clan_name.substring(0, 3) + "..";
-//						else if (clan_name.length() > 14)
-//							clan_name = clan_name.substring(0, 14) + "..";
-//						
-//						tb.append("<tr><td><center>" + pos + "</center></td><td><center><font color=LEVEL>" + clan_name + "</font></center></td><td><center><font color=00FFFF>" + raid + "</font></center></td><td><center><font color=00FF00>" + castle + "</font></center></td></tr>");
-//					}
-//					charname.close();
-//				}
-//				statement.close();
-//				result.close();
-//				con.close();
-//			}
-//			catch (Exception e)
-//			{
-//				_log.warning("Error: could not restore clan_points ranking data info: " + e);
-//				e.printStackTrace();
-//			}   
-//			tb.append("</table>");
-//			tb.append("</body></html>");
-//			
-//			htm.setHtml(tb.toString());
-//			activeChar.sendPacket(htm);
-//		}
-//		return true;
-//	}
-		if (command.equals("clan") && ClanRankingConfig.ENABLE_CLAN_RANKING) {
-		    NpcHtmlMessage htm = new NpcHtmlMessage(0);
-		    StringBuilder tb = new StringBuilder("<html><head><title>Clan Ranking</title></head><body><table width=80><tr><td><button value=\"\" action=\"bypass voiced_ranking \" width=35 height=23 back=\"L2UI_CH3.calculate2_bs_down\" fore=\"L2UI_CH3.calculate2_bs\"></td><td> Back </td></tr></table><br><center>Next Rewarding: <font color=LEVEL>" + TaskClanRankingReward.getTimeToDate() +"</font><br1><table width=290><tr><td><center>Rank</center></td><td><center>Clan Name</center></td><td><center>Raid Point(s)</center></td><td><center>Castle Point(s)</center></td></tr>");
-
-		    try (Connection con = ConnectionPool.getConnection()) {
-		        // Usando try-with-resources para PreparedStatement e ResultSet
-		        try (PreparedStatement statement = con.prepareStatement("SELECT clan_id, boss_points, siege_points FROM clan_points WHERE ((boss_points + siege_points)>0) ORDER BY (boss_points + siege_points) desc LIMIT 15");
-		             ResultSet result = statement.executeQuery()) {
-		             
-		            int pos = 0;
-		            while (result.next()) {
-		                String raid = result.getString("boss_points");
-		                String castle = result.getString("siege_points");
-		                String owner = result.getString("clan_id");
-		                pos += 1;
-
-		                // Usando try-with-resources para PreparedStatement e ResultSet dentro deste bloco
-		                try (PreparedStatement charname = con.prepareStatement("SELECT clan_name FROM clan_data WHERE clan_id=" + owner);
-		                     ResultSet result2 = charname.executeQuery()) {
-		                     
-		                    while (result2.next()) {
-		                        String clan_name = result2.getString("clan_name");
-
-		                        // Lógica de formatação do nome do clã
-		                        if (clan_name.equals("WWWWWWWWWWWWWWWW") || clan_name.equals("WWWWWWWWWWWWWWW") || clan_name.equals("WWWWWWWWWWWWWW") || clan_name.equals("WWWWWWWWWWWWW") || clan_name.equals("WWWWWWWWWWWW") || clan_name.equals("WWWWWWWWWWW") || clan_name.equals("WWWWWWWWWW") || clan_name.equals("WWWWWWWWW") || clan_name.equals("WWWWWWWW") || clan_name.equals("WWWWWWW") || clan_name.equals("WWWWWW"))
-		                            clan_name = clan_name.substring(0, 3) + "..";
-		                        else if (clan_name.length() > 14)
-		                            clan_name = clan_name.substring(0, 14) + "..";
-
-		                        tb.append("<tr><td><center>" + pos + "</center></td><td><center><font color=LEVEL>" + clan_name + "</font></center></td><td><center><font color=00FFFF>" + raid + "</font></center></td><td><center><font color=00FF00>" + castle + "</font></center></td></tr>");
-		                    }
-		                }
-		            }
-		        }
-		    } catch (Exception e) {
-		        _log.warning("Error: could not restore clan_points ranking data info: " + e);
-		        e.printStackTrace();
-		    }
-
-		    tb.append("</table>");
-		    tb.append("</body></html>");
-
-		    htm.setHtml(tb.toString());
-		    activeChar.sendPacket(htm);
 		}
 		return true;
-
+		
 	}
-
+	
 	private static void showRankingHtml(Player activeChar)
 	{
 		NpcHtmlMessage html = new NpcHtmlMessage(0);
-		html.setFile("data/html/mods/menu/Ranking.htm"); 
+		html.setFile("data/html/mods/menu/Ranking.htm");
 		activeChar.sendPacket(html);
 	}
-
+	
 	@Override
 	public String[] getVoicedCommandList()
 	{

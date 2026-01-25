@@ -178,11 +178,15 @@ public final class CharacterCreate extends L2GameClientPacket
 		if (Config.ALLOW_CUSTOM_SPAWN_LOCATION)
 		{
 			newChar.setXYZInvisible(Config.CUSTOM_SPAWN_LOCATION[0], Config.CUSTOM_SPAWN_LOCATION[1], Config.CUSTOM_SPAWN_LOCATION[2]);
+		
 		}
 		else
 		{
 			newChar.setXYZInvisible(template.getSpawnX(), template.getSpawnY(), template.getSpawnZ());
 		}
+		
+		
+		
 		// newChar.setTitle("");
 		newChar.setTitle(Config.ALLOW_NEW_CHAR_TITLE ? Config.NEW_CHAR_TITLE : "");
 		
@@ -271,7 +275,6 @@ public final class CharacterCreate extends L2GameClientPacket
 					q.newQuestState(newChar).setState(Quest.STATE_STARTED);
 			}
 		}
-		
 		newChar.setOnlineStatus(true, false);
 		newChar.deleteMe();
 		

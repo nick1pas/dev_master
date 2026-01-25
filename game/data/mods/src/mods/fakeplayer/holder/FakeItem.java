@@ -8,7 +8,7 @@ public class FakeItem
 	
 	public FakeItem(int itemId, int count, boolean equipped)
 	{
-	_itemId = itemId;
+		_itemId = itemId;
 		_count = count;
 		_equipped = equipped;
 	}

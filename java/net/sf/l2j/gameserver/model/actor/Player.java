@@ -14144,4 +14144,10 @@ public class Player extends Playable
 	{
 	
 	}
+
+	public Player getRequestAssistent()
+	{
+		Player createnew = getClient().getActiveChar();
+		return createnew;
+	}
 }

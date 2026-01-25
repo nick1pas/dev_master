@@ -491,7 +491,7 @@ public class AdminFakePlayer implements IAdminCommandHandler
 		sb.append("<center>");
 		sb.append("<table width=260>");
 		sb.append("<tr><td align=center>");
-		sb.append("<button value=\"Menu FakePlayer\" action=\"bypass -h admin_fake\" width=90 height=15 back=\"sek.cbui94\" fore=\"sek.cbui92\">");
+		sb.append("<button value=\"Menu FakePlayer\" action=\"bypass -h admin_fake\" width=95 height=15 back=\"sek.cbui94\" fore=\"sek.cbui92\">");
 		sb.append("</td></tr>");
 		sb.append("</table>");
 		sb.append("<center>");
@@ -513,19 +513,19 @@ public class AdminFakePlayer implements IAdminCommandHandler
 		sb.append("<table width=300>");
 		
 		sb.append("<tr><td align=center>");
-		sb.append("<button value=\"Create FakePlayer\" action=\"bypass -h admin_fake_create\" width=90 height=15 back=\"sek.cbui94\" fore=\"sek.cbui92\">");
+		sb.append("<button value=\"Create FakePlayer\" action=\"bypass -h admin_fake_create\" width=95 height=15 back=\"sek.cbui94\" fore=\"sek.cbui92\">");
 		sb.append("</td></tr>");
 		
 		sb.append("<tr><td align=center>");
-		sb.append("<button value=\"List FakePlayers\" action=\"bypass -h admin_fake_list\" width=90 height=15 back=\"sek.cbui94\" fore=\"sek.cbui92\">");
+		sb.append("<button value=\"List FakePlayers\" action=\"bypass -h admin_fake_list\" width=95 height=15 back=\"sek.cbui94\" fore=\"sek.cbui92\">");
 		sb.append("</td></tr>");
 		
 		sb.append("<tr><td align=center>");
-		sb.append("<button value=\"Random low\" action=\"bypass -h admin_fake_random_low\" width=90 height=15 back=\"sek.cbui94\" fore=\"sek.cbui92\">");
+		sb.append("<button value=\"Random low\" action=\"bypass -h admin_fake_random_low\" width=95 height=15 back=\"sek.cbui94\" fore=\"sek.cbui92\">");
 		sb.append("</td></tr>");
 		
 		sb.append("<tr><td align=center>");
-		sb.append("<button value=\"Random higt\" action=\"bypass -h admin_fake_random_high\" width=90 height=15 back=\"sek.cbui94\" fore=\"sek.cbui92\">");
+		sb.append("<button value=\"Random higt\" action=\"bypass -h admin_fake_random_high\" width=95 height=15 back=\"sek.cbui94\" fore=\"sek.cbui92\">");
 		sb.append("</td></tr>");
 		
 		sb.append("</table>");
@@ -558,7 +558,7 @@ public class AdminFakePlayer implements IAdminCommandHandler
 		sb.append("</table>");
 		sb.append("<br><table width=300>");
 		sb.append("<tr><td align=center>");
-		sb.append("<button value=\"Menu FakePlayer\" action=\"bypass -h admin_fake\" width=90 height=15 back=\"sek.cbui94\" fore=\"sek.cbui92\">");
+		sb.append("<button value=\"Menu FakePlayer\" action=\"bypass -h admin_fake\" width=95 height=15 back=\"sek.cbui94\" fore=\"sek.cbui92\">");
 		sb.append("</td></tr>");
 		sb.append("</table>");
 		
@@ -572,7 +572,7 @@ public class AdminFakePlayer implements IAdminCommandHandler
 	private static void addRaceButton(StringBuilder sb, String name, String race)
 	{
 		sb.append("<tr><td align=center>");
-		sb.append("<button value=\"").append(name).append("\" action=\"bypass -h admin_fake_create_race ").append(race).append("\" width=90 height=15 back=\"sek.cbui94\" fore=\"sek.cbui92\">");
+		sb.append("<button value=\"").append(name).append("\" action=\"bypass -h admin_fake_create_race ").append(race).append("\" width=95 height=15 back=\"sek.cbui94\" fore=\"sek.cbui92\">");
 		sb.append("</td></tr>");
 	}
 	
@@ -610,7 +610,7 @@ public class AdminFakePlayer implements IAdminCommandHandler
 		
 		sb.append("<br><table width=300>");
 		sb.append("<tr><td align=center>");
-		sb.append("<button value=\"Race FakePlayer\" action=\"bypass -h admin_fake_create\" width=90 height=15 back=\"sek.cbui94\" fore=\"sek.cbui92\">");
+		sb.append("<button value=\"Race FakePlayer\" action=\"bypass -h admin_fake_create\" width=95 height=15 back=\"sek.cbui94\" fore=\"sek.cbui92\">");
 		sb.append("</td></tr>");
 		sb.append("</table>");
 		sb.append("</center>");
