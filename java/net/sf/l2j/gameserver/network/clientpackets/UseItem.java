@@ -147,14 +147,13 @@ public final class UseItem extends L2GameClientPacket
 		}
 
 
-
-
-		if(!activeChar.isInOlympiadMode() && Config.LISTID_RESTRICT_OLY.contains(item.getItemId()))
+		if(activeChar.isInOlympiadMode() && Config.LISTID_RESTRICT_OLY.contains(item.getItemId()))
 		{
 			activeChar.sendMessage("Can only be used -> " + item.getItemName() +" in Olympiad.");
 			activeChar.sendPacket(ActionFailed.STATIC_PACKET);
 			return;
 		}
+		
 		if (!(activeChar.isClanLeader()) && item.getItemId() == 6841 && !activeChar.isGM())
 		{
 		    activeChar.sendPacket(SystemMessageId.CANNOT_EQUIP_ITEM_DUE_TO_BAD_CONDITION);
