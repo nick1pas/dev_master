@@ -547,40 +547,13 @@ public class EnterWorld extends L2GameClientPacket
 			qs.getQuest().notifyEvent("UC", null, player);
 	}
 	
-	/*
-	 * @SuppressWarnings("deprecation") public static double arredondaValor(int casasDecimais, double valor) { BigDecimal decimal = new BigDecimal(valor); return decimal.setScale(casasDecimais, 3).doubleValue(); }
-	 */
+	
 	public static double arredondaValor(int casasDecimais, double valor)
 	{
 		BigDecimal decimal = new BigDecimal(valor);
 		return decimal.setScale(casasDecimais, RoundingMode.HALF_UP).doubleValue();
 	}
 	
-	// private static void onEnterVip(L2PcInstance activeChar)
-	// {
-	// long now = Calendar.getInstance().getTimeInMillis();
-	// long endDay = activeChar.getVipEndTime();
-	// if(now > endDay)
-	// {
-	// activeChar.setVip(false);
-	// activeChar.setVipEndTime(0);
-	// activeChar.sendPacket(new CreatureSay(0,Say2.PARTY,Config.MESSAGE_VIP_EXIT, ""));
-	// //activeChar.sendMessage(Config.MESSAGE_VIP_EXIT);
-	// activeChar.getAppearance().setNameColor(0xFFFF77);
-	// activeChar.getAppearance().setTitleColor(0xFFFF77);
-	// activeChar.broadcastUserInfo();
-	//
-	// }
-	// else
-	// {
-	// Date dt = new Date(endDay);
-	// if(activeChar.isVip())
-	// //activeChar.sendMessage("Your VIP period ends at: " + dt);
-	// activeChar.sendPacket(new CreatureSay(0,Say2.PARTY,Config.MESSAGE_VIP_ENTER + dt, ""));
-	// activeChar.broadcastUserInfo();
-	// //activeChar.sendMessage(Config.MESSAGE_VIP_ENTER + dt);
-	// }
-	// }
 	public static void onEnterVip(Player player)
 	{
 		long now = System.currentTimeMillis();
