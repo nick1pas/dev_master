@@ -119,8 +119,6 @@ import net.sf.l2j.mods.interfaces.ICrafter;
 import net.sf.l2j.mods.manager.FakePlayerManager;
 import net.sf.l2j.mods.party.FakePartyManager;
 
- 
-
 public class FakePlayer extends Player
 {
 	private static final String AUTOCREATE_ACCOUNTS_INSERT = "INSERT INTO accounts (login, password, lastactive, access_level) values (?, ?, ?, ?)";
@@ -1935,7 +1933,6 @@ public class FakePlayer extends Player
 				player.setVip(rset.getInt("vip") == 1 ? true : false);
 				player.setVipEndTime(rset.getLong("vip_end"));
 				
-			 
 				player.setAio(rset.getInt("aio") == 1 ? true : false);
 				player.setAioEndTime(rset.getLong("aio_end"));
 				

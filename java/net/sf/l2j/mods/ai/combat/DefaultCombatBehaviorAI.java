@@ -5,11 +5,8 @@ import net.sf.l2j.mods.actor.FakePlayer;
 import net.sf.l2j.mods.enums.CombatKit;
 import net.sf.l2j.mods.skills.SkillCombo;
 
- 
-
 public class DefaultCombatBehaviorAI extends CombatBehaviorAI
 {
-	
 	
 	public DefaultCombatBehaviorAI(FakePlayer character)
 	{

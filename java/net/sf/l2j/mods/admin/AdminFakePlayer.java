@@ -14,8 +14,6 @@ import net.sf.l2j.mods.actor.FakePlayer;
 import net.sf.l2j.mods.factory.FakePlayerFactory;
 import net.sf.l2j.mods.manager.FakePlayerManager;
 
- 
-
 public class AdminFakePlayer implements IAdminCommandHandler
 {
 	
@@ -134,8 +132,6 @@ public class AdminFakePlayer implements IAdminCommandHandler
 		admin.sendMessage("High Class FakePlayer spawned: " + fake.getName() + " (" + classId.name().replace("_", " ") + ")");
 		
 		fake.onActionShift(admin);
-		
-		
 		
 	}
 	
@@ -700,6 +696,7 @@ public class AdminFakePlayer implements IAdminCommandHandler
 				return false;
 		}
 	}
+	
 	public static AdminFakePlayer getInstance()
 	{
 		return SingletonHolder.INSTANCE;
@@ -709,6 +706,7 @@ public class AdminFakePlayer implements IAdminCommandHandler
 	{
 		private static final AdminFakePlayer INSTANCE = new AdminFakePlayer();
 	}
+	
 	@Override
 	public String[] getAdminCommandList()
 	{

@@ -8,8 +8,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.sf.l2j.mods.actor.FakePlayer;
 
- 
-
 public final class FakePlayerManager
 {
 	private final List<FakePlayer> _fakePlayers = new CopyOnWriteArrayList<>();
