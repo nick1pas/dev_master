@@ -227,7 +227,7 @@ public class ClanTable
 			if (player.isOnline())
 			{
 				player.store();
-				
+				player.broadcastCharInfo();
 				if (player.getPet() != null)
 					player.getPet().store();
 			}
