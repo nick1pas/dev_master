@@ -132,17 +132,12 @@ public class ClanTable
 		return null;
 	}
 	
-	/**
-	 * Creates a new clan and store clan info to database
-	 * @param player The player who requested the clan creation.
-	 * @param clanName The name of the clan player wants.
-	 * @return null if checks fail, or L2Clan
-	 */
 	public L2Clan createClan(Player player, String clanName)
 	{
 		if (player == null)
 			return null;
 		
+		// ===== VALIDAÇÕES =====
 		if (player.getLevel() < 10)
 		{
 			player.sendPacket(SystemMessageId.YOU_DO_NOT_MEET_CRITERIA_IN_ORDER_TO_CREATE_A_CLAN);
@@ -155,44 +150,92 @@ public class ClanTable
 			return null;
 		}
 		
-		if (System.currentTimeMillis() < player.getClanCreateExpiryTime())
+		if (getClanByName(clanName) != null)
 		{
-			// player.sendPacket(SystemMessageId.YOU_MUST_WAIT_XX_DAYS_BEFORE_CREATING_A_NEW_CLAN);
-			player.sendMessage("You need Wait " + Config.ALT_CLAN_CREATE_DAYS + " minute(s) for create new clan..");
+			player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.S1_ALREADY_EXISTS).addString(clanName));
 			return null;
 		}
 		
-		if (!StringUtil.isAlphaNumeric(clanName))
+		if (!StringUtil.isAlphaNumeric(clanName) || clanName.length() < 2 || clanName.length() > 16)
 		{
 			player.sendPacket(SystemMessageId.CLAN_NAME_INVALID);
 			return null;
 		}
 		
-		if (clanName.length() < 2 || clanName.length() > 16)
+		// ===== CRIAÇÃO =====
+		final int clanId = IdFactory.getInstance().getNextId();
+		final L2Clan clan = new L2Clan(clanId, clanName);
+		
+		try (Connection con = ConnectionPool.getConnection())
 		{
-			player.sendPacket(SystemMessageId.CLAN_NAME_LENGTH_INCORRECT);
+			con.setAutoCommit(false); // 🔥 TRANSAÇÃO
+			
+			// =========================
+			// INSERT CLAN
+			// =========================
+			try (PreparedStatement ps = con.prepareStatement("INSERT INTO clan_data (clan_id, clan_name, leader_id, clan_level) VALUES (?, ?, ?, ?)"))
+			{
+				ps.setInt(1, clanId);
+				ps.setString(2, clanName);
+				ps.setInt(3, player.getObjectId());
+				ps.setInt(4, 0);
+				ps.executeUpdate();
+			}
+			
+			// =========================
+			// UPDATE PLAYER
+			// =========================
+			try (PreparedStatement ps = con.prepareStatement("UPDATE characters SET clanid=?, title=? WHERE obj_Id=?"))
+			{
+				ps.setInt(1, clanId);
+				ps.setString(2, "Clan Leader");
+				ps.setInt(3, player.getObjectId());
+				ps.executeUpdate();
+			}
+			
+			con.commit();
+		}
+		catch (Exception e)
+		{
+			_log.log(Level.SEVERE, "Error creating clan: ", e);
 			return null;
 		}
 		
-		if (getClanByName(clanName) != null)
-		{
-			// clan name is already taken
-			player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.S1_ALREADY_EXISTS).addString(clanName));
-			return null;
-		}
-		
-		L2Clan clan = new L2Clan(IdFactory.getInstance().getNextId(), clanName);
+		// =========================
+		// MEMÓRIA (L2OFF STYLE)
+		// =========================
 		L2ClanMember leader = new L2ClanMember(clan, player);
 		clan.setLeader(leader);
 		leader.setPlayerInstance(player);
-		clan.store();
+		
 		player.setClan(clan);
+		
 		player.setPledgeClass(L2ClanMember.calculatePledgeClass(player));
 		player.setClanPrivileges(L2Clan.CP_ALL);
 		
+		_clans.put(clanId, clan);
+		
+		// =========================
+		// PACKETS
+		// =========================
 		player.sendPacket(new PledgeShowMemberListAll(clan, 0));
 		player.sendPacket(new UserInfo(player));
 		player.sendPacket(SystemMessageId.CLAN_CREATED);
+		
+		try
+		{
+			if (player.isOnline())
+			{
+				player.store();
+				
+				if (player.getPet() != null)
+					player.getPet().store();
+			}
+		}
+		catch (Exception e)
+		{
+			_log.log(Level.SEVERE, "Error on AutoSaveTask. ClanTable", e + player.getName());
+		}
 		return clan;
 	}
 	
@@ -220,13 +263,13 @@ public class ClanTable
 		
 		_clans.put(clan.getClanId(), clan);
 		createPhantomAlly(clan, holder, clan.getClanId());
-
+		
 		return clan;
 	}
 	
 	private static void createPhantomAlly(L2Clan clan, ClanAllyCrestHolder holder, int id)
 	{
-
+		
 		clan.setAllyName(holder.getAllyName());
 		clan.setAllyId(id);
 		clan.setAllyPenaltyExpiryTime(0, 0);
@@ -234,8 +277,6 @@ public class ClanTable
 		clan.store();
 		clan.updateClanInDB();
 	}
-	
-	
 	
 	public synchronized void destroyClan(int clanId)
 	{
