@@ -21,6 +21,7 @@ import net.sf.l2j.gameserver.network.serverpackets.RestartResponse;
 import net.sf.l2j.gameserver.network.serverpackets.SystemMessage;
 import net.sf.l2j.gameserver.taskmanager.AttackStanceTaskManager;
 import net.sf.l2j.protection.hwid.HwidDAO;
+import net.sf.l2j.solofarm.instancemanager.SoloFarmManager;
 
 public final class RequestRestart extends L2GameClientPacket
 {
@@ -117,7 +118,7 @@ public final class RequestRestart extends L2GameClientPacket
 				player.getParty().broadcastToPartyMembers(SystemMessage.sendString(player.getName() + " has been removed from the upcoming festival."));
 		}
 		dao.restartAndDisconnetion(player);
-		
+		SoloFarmManager.getInstance().onLogout(player);
 		player.removeFromBossZone();
 		
 		final L2GameClient client = getClient();

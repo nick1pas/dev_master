@@ -180,6 +180,8 @@ import net.sf.l2j.mission.MissionReset;
 import net.sf.l2j.mods.FakesEngine;
 import net.sf.l2j.shop.offline.OfflinePlayerData;
 import net.sf.l2j.shop.offline.OfflineStoresData;
+import net.sf.l2j.solofarm.data.SoloFarmData;
+import net.sf.l2j.solofarm.instancemanager.SoloFarmSpawnTable;
 import net.sf.l2j.timezone.TimeFarmZoneData;
 import net.sf.l2j.timezone.TimeFarmZoneManager;
 import net.sf.l2j.upgrade.UpgradeItemData;
@@ -557,7 +559,8 @@ public class GameServer
 			}
 		}, 1000 * 15);
 		
-		
+		SoloFarmData.getInstance();
+		SoloFarmSpawnTable.getInstance().load();
 		GmData.getInstance();
 		MerchantData.getInstance();
 		StringUtil.printSection("Handlers");

@@ -38,6 +38,7 @@ import net.sf.l2j.gameserver.handler.voicedcommandhandlers.VoicedRanking;
 import net.sf.l2j.gameserver.handler.voicedcommandhandlers.VoicedRankingCustom;
 import net.sf.l2j.gameserver.handler.voicedcommandhandlers.VoicedRemovedBanChat;
 import net.sf.l2j.gameserver.handler.voicedcommandhandlers.VoicedReport;
+import net.sf.l2j.gameserver.handler.voicedcommandhandlers.VoicedSoloFarm;
 import net.sf.l2j.gameserver.handler.voicedcommandhandlers.VoicedStatus;
 import net.sf.l2j.gameserver.handler.voicedcommandhandlers.VoicedTalent;
 import net.sf.l2j.mission.VoicedMission;
@@ -54,6 +55,7 @@ public class VoicedCommandHandler
 	
 	protected VoicedCommandHandler()
 	{
+		registerHandler(new VoicedSoloFarm());
 		registerHandler(new VoicedStatus());
 		registerHandler(new VoicedTalent());
 		//Codigos para colocar aqui dentro	

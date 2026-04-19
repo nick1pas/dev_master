@@ -11,6 +11,7 @@ import net.sf.l2j.gameserver.model.actor.Player;
 import net.sf.l2j.gameserver.network.serverpackets.TutorialCloseHtml;
 import net.sf.l2j.gameserver.scriptings.QuestState;
 import net.sf.l2j.mission.VoicedMission;
+import net.sf.l2j.solofarm.instancemanager.SoloFarmManager;
 
 public class RequestTutorialLinkHtml extends L2GameClientPacket
 {
@@ -35,8 +36,13 @@ public class RequestTutorialLinkHtml extends L2GameClientPacket
 			player.sendPacket(TutorialCloseHtml.STATIC_PACKET);
 			return;
 		}
-		 
-		 
+		
+		if (_bypass.equalsIgnoreCase("solofarm_exit"))
+		{
+			SoloFarmManager.getInstance().finish(player, false);
+			player.sendPacket(TutorialCloseHtml.STATIC_PACKET);
+			return;
+		}
 		
 		if (Config.ACTIVE_MISSION)
 		{

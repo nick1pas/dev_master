@@ -46,6 +46,7 @@ import net.sf.l2j.gameserver.model.item.instance.ItemInstance;
 import net.sf.l2j.gameserver.model.zone.type.L2SpawnDropZone;
 import net.sf.l2j.gameserver.network.SystemMessageId;
 import net.sf.l2j.mods.data.ClanAllyCrestData;
+import net.sf.l2j.solofarm.data.SoloFarmData;
 
 /**
  * This class handles following admin commands:
@@ -236,6 +237,11 @@ public class AdminAdmin implements IAdminCommandHandler
 					{
 						AnnouncementTable.getInstance().reload();
 						activeChar.sendMessage("The content of announcements.xml has been reloaded.");
+					}
+					else if (type.startsWith("solofarm"))
+					{
+						SoloFarmData.getInstance().reload();
+						activeChar.sendMessage("The content of solofarm.xml has been reloaded.");
 					}
 					else if (type.startsWith("config"))
 					{

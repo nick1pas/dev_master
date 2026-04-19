@@ -59,6 +59,7 @@ import net.sf.l2j.gameserver.scripts.EventDroplist;
 import net.sf.l2j.gameserver.scripts.EventDroplist.DateDrop;
 import net.sf.l2j.gameserver.util.Broadcast;
 import net.sf.l2j.gameserver.util.Util;
+import net.sf.l2j.solofarm.instancemanager.SoloFarmManager;
 import net.sf.l2j.timezone.TimeFarmZoneManager;
 
 /**
@@ -220,7 +221,7 @@ public class Attackable extends L2Npc
 			
 			if (player != null)
 			{
-				
+				SoloFarmManager.getInstance().onKill(this, player);
 				List<Quest> quests = getTemplate().getEventQuests(EventType.ON_KILL);
 				if (quests != null)
 					for (Quest quest : quests)

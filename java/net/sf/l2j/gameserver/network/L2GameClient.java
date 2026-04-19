@@ -41,6 +41,7 @@ import net.sf.l2j.gameserver.network.serverpackets.ServerClose;
 import net.sf.l2j.gameserver.util.FloodProtectors;
 import net.sf.l2j.protection.hwid.HwidDAO;
 import net.sf.l2j.protection.hwid.HwidSession;
+import net.sf.l2j.solofarm.instancemanager.SoloFarmManager;
 
 /**
  * Represents a client connected on Game Server
@@ -786,8 +787,7 @@ public final class L2GameClient extends MMOClient<MMOConnection<L2GameClient>> i
 						}
 					}
 					dao.restartAndDisconnetion(getActiveChar());
-					
-					
+					SoloFarmManager.getInstance().onLogout(getActiveChar());
 					
 					if (getActiveChar().isOnline())
 						getActiveChar().deleteMe();
