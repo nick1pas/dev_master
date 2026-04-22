@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version='1.0' encoding='utf-8'?>
 <list>
 	<teleport id="1" loc_x="-12672" loc_y="122776" loc_z="-3116" price="10000" fornoble="0"/>
 	<teleport id="2" loc_x="-12672" loc_y="122776" loc_z="-3116" price="9200" fornoble="0"/>
@@ -656,4 +656,33 @@
 	<teleport id="10035" loc_x="146705" loc_y="25840" loc_z="-2000" price="17000" fornoble="0"/>
 	<teleport id="10036" loc_x="164564" loc_y="-48145" loc_z="-3536" price="11000" fornoble="0"/>
 	<teleport id="10037" loc_x="144880" loc_y="-113468" loc_z="-2560" price="14000" fornoble="0"/>
+		<!-- Gatekeeper -->
+	<teleport id="10100" loc_x="83424" loc_y="148626" loc_z="-3405" price="1" fornoble="0"/><!-- Giran -->
+	<teleport id="10101" loc_x="147449" loc_y="25810" loc_z="-2013" price="1" fornoble="0"/><!-- Aden -->
+	<teleport id="10102" loc_x="147718" loc_y="-56609" loc_z="-2781" price="1" fornoble="0"/><!-- Goddard -->
+	<teleport id="10103" loc_x="43829" loc_y="-48088" loc_z="-797" price="1" fornoble="0"/><!-- Rune -->
+	<teleport id="10104" loc_x="87359" loc_y="-142067" loc_z="-1341" price="1" fornoble="0"/><!-- Schuttgard -->
+	<teleport id="10105" loc_x="82745" loc_y="53580" loc_z="-1496" price="1" fornoble="0"/><!-- Oren -->
+	<teleport id="10106" loc_x="111380" loc_y="219023" loc_z="-3546" price="1" fornoble="0"/><!-- Heine -->
+	<teleport id="10107" loc_x="16036" loc_y="143219" loc_z="-2758" price="1" fornoble="0"/><!-- Dion -->
+	<teleport id="10108" loc_x="-12806" loc_y="122692" loc_z="-3117" price="1" fornoble="0"/><!-- Gludio -->
+	<teleport id="10109" loc_x="-80839" loc_y="149980" loc_z="-3044" price="1" fornoble="0"/><!-- Gludin -->
+	<teleport id="10110" loc_x="-84387" loc_y="244407" loc_z="-3730" price="1" fornoble="0"/><!-- Talking Island -->
+	<teleport id="10111" loc_x="47187" loc_y="50985" loc_z="-2996" price="1" fornoble="0"/><!-- Elven Village -->
+	<teleport id="10112" loc_x="9872" loc_y="15746" loc_z="-4578" price="1" fornoble="0"/><!-- D.A. Village -->
+	<teleport id="10113" loc_x="115429" loc_y="-178299" loc_z="-929" price="1" fornoble="0"/><!-- Dwarven Village -->
+	<teleport id="10114" loc_x="-44846" loc_y="-112589" loc_z="-242" price="1" fornoble="0"/><!-- Orc Village -->
+	<teleport id="10115" loc_x="116764" loc_y="76947" loc_z="-2717" price="1" fornoble="0"/><!-- Hunters Village -->
+	<teleport id="10120" loc_x="125535" loc_y="-40864" loc_z="-3725" price="1" fornoble="0"/><!-- Varka farm zone 1 -->
+	<teleport id="10121" loc_x="116078" loc_y="-46433" loc_z="-2638" price="1" fornoble="0"/><!-- Varka farm zone 2 -->
+	<teleport id="10124" loc_x="131097" loc_y="-72346" loc_z="-3524" price="1" fornoble="0"/><!-- Ketra farm zone 1 -->
+	<teleport id="10125" loc_x="149452" loc_y="-81801" loc_z="-5612" price="1" fornoble="0"/><!-- Ketra farm zone 2 -->
+	<teleport id="10231" loc_x="124120" loc_y="-75032" loc_z="-2904" price="1" fornoble="0"/><!-- Moss farm zone 1 -->
+	<teleport id="10132" loc_x="123912" loc_y="-74904" loc_z="-2920" price="1" fornoble="0"/>
+	<teleport id="50041" loc_x="105800" loc_y="109656" loc_z="-3224" price="14000" fornoble="0"/>
+	<teleport id="50042" loc_x="17720" loc_y="114152" loc_z="-11672" price="14000" fornoble="0"/>
+	<teleport id="10128" loc_x="17704" loc_y="108408" loc_z="-9056" price="1" fornoble="0"/>
+	<teleport id="10129" loc_x="131355" loc_y="114451" loc_z="-3713" price="1" fornoble="0"/>
+	<teleport id="10130" loc_x="185352" loc_y="20264" loc_z="-3264" price="1" fornoble="0"/>
+	<teleport id="10131" loc_x="145880" loc_y="-10872" loc_z="-4408" price="1" fornoble="0"/>
 </list>
