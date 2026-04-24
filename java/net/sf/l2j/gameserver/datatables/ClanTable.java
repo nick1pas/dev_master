@@ -250,6 +250,44 @@ public class ClanTable
 		final L2Clan clan = new L2Clan(IdFactory.getInstance().getNextId(), holder.getName());
 		final L2ClanMember leader = new L2ClanMember(clan, leaderPlayer);
 		
+
+		try (Connection con = ConnectionPool.getConnection())
+		{
+			con.setAutoCommit(false); // 🔥 TRANSAÇÃO
+			
+			// =========================
+			// INSERT CLAN
+			// =========================
+			try (PreparedStatement ps = con.prepareStatement("INSERT INTO clan_data (clan_id, clan_name, leader_id, clan_level) VALUES (?, ?, ?, ?)"))
+			{
+				ps.setInt(1, clan.getClanId());
+				ps.setString(2, holder.getName());
+				ps.setInt(3, leader.getObjectId());
+				ps.setInt(4, 0);
+				ps.executeUpdate();
+			}
+			
+			// =========================
+			// UPDATE PLAYER
+			// =========================
+			try (PreparedStatement ps = con.prepareStatement("UPDATE characters SET clanid=?, title=? WHERE obj_Id=?"))
+			{
+				ps.setInt(1, clan.getClanId());
+				ps.setString(2, "Clan Leader");
+				ps.setInt(3, leader.getObjectId());
+				ps.executeUpdate();
+			}
+			
+			con.commit();
+		}
+		catch (Exception e)
+		{
+			_log.log(Level.SEVERE, "Error creating clan: ", e);
+			return null;
+		}
+		
+		
+		
 		clan.setLeader(leader);
 		leader.setPlayerInstance(leaderPlayer);
 		

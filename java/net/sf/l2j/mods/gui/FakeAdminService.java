@@ -240,7 +240,7 @@ public final class FakeAdminService
 			FakePlayer fp = FakePlayerManager.getInstance().getPlayer(objId);
 			if (fp == null)
 				continue;
-			
+			fp.store();
 			fp.abortAttack();
 			fp.abortCast();
 			fp.deleteMe();
@@ -263,6 +263,7 @@ public final class FakeAdminService
 			FakePlayer fp = FakePlayerManager.getInstance().getPlayer(objId);
 			if (fp != null)
 			{
+				fp.store();
 				fp.abortAttack();
 				fp.abortCast();
 				fp.deleteMe(); // sai do mundo

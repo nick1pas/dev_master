@@ -1,6 +1,7 @@
 package net.sf.l2j.gameserver.model.actor.stat;
 
 import net.sf.l2j.gameserver.instancemanager.ZoneManager;
+import net.sf.l2j.gameserver.model.RemoteClassMaster;
 import net.sf.l2j.gameserver.model.actor.Playable;
 import net.sf.l2j.gameserver.model.base.Experience;
 import net.sf.l2j.gameserver.model.zone.ZoneId;
@@ -35,8 +36,11 @@ public class PlayableStat extends CharStat
 		}
 		
 		if (level != getLevel())
+		{
 			addLevel((byte) (level - getLevel()));
-		
+			
+			RemoteClassMaster.showQuestionMark(getActiveChar().getActingPlayer());
+		}
 		return true;
 	}
 	

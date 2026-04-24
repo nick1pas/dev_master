@@ -28,6 +28,8 @@ import net.sf.l2j.gameserver.network.serverpackets.SystemMessage;
 import net.sf.l2j.gameserver.taskmanager.GameTimeController;
 import net.sf.l2j.gameserver.taskmanager.ItemsOnGroundTaskManager;
 import net.sf.l2j.gameserver.util.Broadcast;
+import net.sf.l2j.mods.actor.FakePlayer;
+import net.sf.l2j.mods.manager.FakePlayerManager;
 import net.sf.l2j.shop.offline.OfflinePlayerData;
 import net.sf.l2j.shop.offline.OfflineStoresData;
 
@@ -146,7 +148,7 @@ public class Shutdown extends Thread
 			// disconnect players
 			try
 			{
-				disconnectAllCharacters();
+				shutdownClean();
 				_log.info("All players have been disconnected.");
 			}
 			catch (Throwable t)
@@ -448,30 +450,84 @@ public class Shutdown extends Thread
 		}
 	}
 	
-	/**
-	 * Disconnects all clients from the server
-	 */
-	private static void disconnectAllCharacters()
+	private static void shutdownClean()
 	{
-		for (Player player : L2World.getInstance().getPlayers())
-		{
-			try
-			{
-				L2GameClient client = player.getClient();
-				if (client != null && !client.isDetached())
-				{
-					client.close(ServerClose.STATIC_PACKET);
-					client.setActiveChar(null);
-					player.setClient(null);
-				}
-				player.deleteMe();
-			}
-			catch (Throwable t)
-			{
-				_log.log(Level.WARNING, "Failed to logout chararacter: " + player, t);
-			}
-		}
+	    _log.info("Starting clean shutdown...");
+
+	    // 1️⃣ REMOVE TODOS FAKES PRIMEIRO
+	    cleanFakePlayers();
+
+	    // 2️⃣ DESCONECTA PLAYERS REAIS
+	    disconnectAllRealPlayers();
+
+	    _log.info("Shutdown cleanup finished.");
 	}
+	
+	private static void cleanFakePlayers()
+	{
+	    int count = 0;
+
+	    for (FakePlayer fp : FakePlayerManager.getInstance().getFakePlayers())
+	    {
+	        if (fp == null)
+	            continue;
+
+	        try
+	        {
+	        	fp.store();
+	            fp.abortAttack();
+	            fp.abortCast();
+	            fp.deleteMe();
+	            count++;
+	        }
+	        catch (Exception e)
+	        {
+	            _log.warning("Error removing fake player: " + e.getMessage());
+	        }
+	    }
+
+	    FakePlayerManager.getInstance().clear(); // 🔥 IMPORTANTE
+
+	    _log.info("FakePlayers removed: " + count);
+	}
+	
+	private static void disconnectAllRealPlayers()
+	{
+	    int count = 0;
+
+	    for (Player player : L2World.getInstance().getPlayers())
+	    {
+	        if (player == null)
+	            continue;
+
+	        try
+	        {
+	            // IGNORA FakePlayer se por acaso estiver no world
+	            if (player instanceof FakePlayer)
+	                continue;
+
+	            L2GameClient client = player.getClient();
+
+	            if (client != null && !client.isDetached())
+	            {
+	                client.close(ServerClose.STATIC_PACKET);
+	                client.setActiveChar(null);
+	            }
+	            player.store();
+	            player.setClient(null);
+	            player.deleteMe();
+
+	            count++;
+	        }
+	        catch (Throwable t)
+	        {
+	            _log.log(Level.WARNING, "Failed to logout character: " + player, t);
+	        }
+	    }
+
+	    _log.info("Real players disconnected: " + count);
+	}
+	
 	
 	/**
 	 * get the shutdown-hook instance the shutdown-hook instance is created by the first call of this function, but it has to be registrered externaly.

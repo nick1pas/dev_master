@@ -55,6 +55,10 @@ public final class FakePlayerManager
 		return _fakePlayers.size();
 	}
 	
+	public void clear()
+	{
+		_fakePlayers.clear();
+	}
 	public static FakePlayerManager getInstance()
 	{
 		return SingletonHolder.INSTANCE;
