@@ -8,10 +8,9 @@ Se você baixou o pacote do servidor e está com dúvidas de como executar, siga
 
 | Componente   | Download |
 |--------------|----------|
-| 🔧 Client Files (System, Animations, SysTextures...) | [Download Client](https://mega.nz/file/gmEAhRSY#3Trm55-Vz-EAvG9QQ0hJF4AGYPvDOCmcvohL7YQ8dTY) |
+| 🔧 Client Files (System, Animations, SysTextures...) | [Download Client](https://github.com/JulioPradoL2j/L2JDev-Patch) |
 | ☕ Java 11 | [Download Java 11](https://mega.nz/file/V7tj1arS#OKWaTzaCqYK0m3iMmR0kW3TddfAJoiu8a20kOFEKShk) |
 | 🛢️ MariaDB 10.4 | [Download MariaDB](https://mega.nz/file/1jEykRgL#DDuIGktiFbmE-M0jMzhUvYVckw1U0ov-OnZEYS5vopU) |
-| 🔧️ Geodata L2D | [Download Geodata](https://mega.nz/file/0yhmTQhC#n8VmP03UJpdBtt1lPM-AZSPNTTdUygN0ODn-xc0coRk) |
 
 ---
 
