@@ -27,6 +27,7 @@ import net.sf.l2j.gameserver.datatables.NpcTable;
 import net.sf.l2j.gameserver.datatables.NpcWalkerRoutesTable;
 import net.sf.l2j.gameserver.datatables.SkillTable;
 import net.sf.l2j.gameserver.datatables.TeleportLocationTable;
+import net.sf.l2j.gameserver.datatables.xml.AugmentStoneData;
 import net.sf.l2j.gameserver.datatables.xml.DressMeData;
 import net.sf.l2j.gameserver.datatables.xml.EnchantSkillRateData;
 import net.sf.l2j.gameserver.datatables.xml.FakePcsTable;
@@ -36,6 +37,7 @@ import net.sf.l2j.gameserver.datatables.xml.TalentData;
 import net.sf.l2j.gameserver.handler.IAdminCommandHandler;
 import net.sf.l2j.gameserver.instancemanager.CursedWeaponsManager;
 import net.sf.l2j.gameserver.instancemanager.ZoneManager;
+import net.sf.l2j.gameserver.instancemanager.custom.CustomAugmentManager;
 import net.sf.l2j.gameserver.model.L2Effect;
 import net.sf.l2j.gameserver.model.L2Object;
 import net.sf.l2j.gameserver.model.L2Skill;
@@ -218,6 +220,12 @@ public class AdminAdmin implements IAdminCommandHandler
 						TalentData.getInstance().reload();
 						activeChar.sendMessage("The content of data/xml/custom/talentTrees alls .xml has been reloaded.");
 					}
+					else if (type.startsWith("augment"))
+					{
+						AugmentStoneData.getInstance().reload();
+						CustomAugmentManager.getInstance().reload();
+						activeChar.sendMessage("The content of data/xml/custom/augmentStones alls .xml has been reloaded.");
+					}
 					else if (type.startsWith("dungeon"))
 					{
 						DungeonData.getInstance().reload();
@@ -387,7 +395,7 @@ public class AdminAdmin implements IAdminCommandHandler
 					{
 						activeChar.sendMessage("Usage : //reload <acar|announcement|config|crest|door>");
 						activeChar.sendMessage("Usage : //reload <htm|item|multisell|npc|npcwalker>");
-						activeChar.sendMessage("Usage : //reload <skill|teleport|zone|dressme|merchant>");
+						activeChar.sendMessage("Usage : //reload <skill|teleport|zone|dressme|merchant|augment|talent>");
 					}
 				}
 				while (st.hasMoreTokens());
@@ -396,7 +404,7 @@ public class AdminAdmin implements IAdminCommandHandler
 			{
 				activeChar.sendMessage("Usage : //reload <acar|announcement|config|crest|door>");
 				activeChar.sendMessage("Usage : //reload <htm|item|multisell|npc|npcwalker>");
-				activeChar.sendMessage("Usage : //reload <skill|teleport|zone|dressme|merchant>");
+				activeChar.sendMessage("Usage : //reload <skill|teleport|zone|dressme|merchant|augment|talent>");
 			}
 		}
 		return true;

@@ -2,6 +2,7 @@ package net.sf.l2j.gameserver.network.clientpackets;
 
 import net.sf.l2j.Config;
 import net.sf.l2j.commons.random.Rnd;
+import net.sf.l2j.gameserver.instancemanager.custom.CustomAugmentManager;
 import net.sf.l2j.gameserver.model.L2Object;
 import net.sf.l2j.gameserver.model.L2World;
 import net.sf.l2j.gameserver.model.actor.Player;
@@ -857,7 +858,7 @@ public final class RequestEnchantItem extends L2GameClientPacket
 					sm.addItemName(crystals.getItemId());
 					sm.addNumber(count);
 					activeChar.sendPacket(sm);
-					
+					CustomAugmentManager.getInstance().removeWeaponAugment(activeChar, destroyItem);
 					activeChar.sendPacket(new ItemList(activeChar, true));
 					
 					StatusUpdate su = new StatusUpdate(activeChar);

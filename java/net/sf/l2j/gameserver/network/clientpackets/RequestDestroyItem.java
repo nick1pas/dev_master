@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import net.sf.l2j.Config;
 import net.sf.l2j.gameserver.ConnectionPool;
 import net.sf.l2j.gameserver.instancemanager.CursedWeaponsManager;
+import net.sf.l2j.gameserver.instancemanager.custom.CustomAugmentManager;
 import net.sf.l2j.gameserver.model.actor.Player;
 import net.sf.l2j.gameserver.model.item.instance.ItemInstance;
 import net.sf.l2j.gameserver.model.item.type.EtcItemType;
@@ -139,6 +140,7 @@ public final class RequestDestroyItem extends L2GameClientPacket
 			iu.addModifiedItem(removedItem);
 		
 		activeChar.sendPacket(iu);
+		CustomAugmentManager.getInstance().deleteWeaponAugment(activeChar, removedItem);
 		
 		StatusUpdate su = new StatusUpdate(activeChar);
 		su.addAttribute(StatusUpdate.CUR_LOAD, activeChar.getCurrentLoad());

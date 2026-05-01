@@ -48,178 +48,184 @@ public class RaidBossSpawnManager
 		UNDEFINED
 	}
 	
-//	public RaidBossSpawnManager()
-//	{
-//		init();
-//	}
-	
-	
+	// public RaidBossSpawnManager()
+	// {
+	// init();
+	// }
 	
 	public RaidBossSpawnManager()
 	{
-	    if (Config.WAIT_TIME_FOR_SPAWN_ALL_NPCS)
-	        scheduleRaidBossSpawnsWithNpcConfig();
-	    else
-	        init();
+		if (Config.WAIT_TIME_FOR_SPAWN_ALL_NPCS)
+			scheduleRaidBossSpawnsWithNpcConfig();
+		else
+			init();
 	}
-
-	private void init() {
-	    TimeRaidBossManager raidBossTimes = TimeRaidBossManager.getInstance();
-
-	    try (Connection con = ConnectionPool.getConnection();
-	         PreparedStatement statement = con.prepareStatement("SELECT * FROM raidboss_spawnlist ORDER BY boss_id");
-	         ResultSet rset = statement.executeQuery()) {
-
-	        while (rset.next()) {
-	            int bossId = rset.getInt("boss_id");
-	            final NpcTemplate template = getValidTemplate(bossId);
-	            if (template == null) {
-	                _log.warning("RaidBossSpawnManager: Could not load raidboss #" + bossId + " from DB");
-	                continue;
-	            }
-
-	            final L2Spawn spawnDat = new L2Spawn(template);
-	            spawnDat.setLoc(rset.getInt("loc_x"), rset.getInt("loc_y"), rset.getInt("loc_z"), rset.getInt("heading"));
-
-	            List<TimeRaidBossManager.RespawnTime> respawns = raidBossTimes.getRespawnTimes(bossId);
-
-	            if (respawns != null && !respawns.isEmpty()) {
-	                // Respawn customizado: não seta delay no spawnDat para não usar respawn automático
-	                spawnDat.setRespawnMinDelay(-1);
-	                spawnDat.setRespawnMaxDelay(-1);
-	            } else {
-	                // Usa spawn padrão do banco ou config
-	                if (Config.RESPAWN_CUSTOM && Config.RAID_RESPAWN_IDS_LIST.contains(bossId)) {
-	                    spawnDat.setRespawnMinDelay(Config.MIN_RESPAWN);
-	                    spawnDat.setRespawnMaxDelay(Config.MAX_RESPAWN);
-	                } else {
-	                    spawnDat.setRespawnMinDelay(rset.getInt("spawn_time"));
-	                    spawnDat.setRespawnMaxDelay(rset.getInt("random_time"));
-	                }
-	            }
-
-	            addNewSpawn(spawnDat, rset.getLong("respawn_time"), rset.getDouble("currentHP"), rset.getDouble("currentMP"), false);
-	        }
-
-	        _log.info("RaidBossSpawnManager: Loaded " + _bosses.size() + " instances.");
-	        _log.info("RaidBossSpawnManager: Scheduled " + _schedules.size() + " instances.");
-
-	    } catch (SQLException e) {
-	        _log.warning("RaidBossSpawnManager: Couldnt load raidboss_spawnlist table.");
-	    } catch (Exception e) {
-	        _log.log(Level.WARNING, "Error while initializing RaidBossSpawnManager: " + e.getMessage(), e);
-	    }
+	
+	private void init()
+	{
+		TimeRaidBossManager raidBossTimes = TimeRaidBossManager.getInstance();
+		
+		try (Connection con = ConnectionPool.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM raidboss_spawnlist ORDER BY boss_id"); ResultSet rset = statement.executeQuery())
+		{
+			
+			while (rset.next())
+			{
+				int bossId = rset.getInt("boss_id");
+				final NpcTemplate template = getValidTemplate(bossId);
+				if (template == null)
+				{
+					_log.warning("RaidBossSpawnManager: Could not load raidboss #" + bossId + " from DB");
+					continue;
+				}
+				
+				final L2Spawn spawnDat = new L2Spawn(template);
+				spawnDat.setLoc(rset.getInt("loc_x"), rset.getInt("loc_y"), rset.getInt("loc_z"), rset.getInt("heading"));
+				
+				List<TimeRaidBossManager.RespawnTime> respawns = raidBossTimes.getRespawnTimes(bossId);
+				
+				if (respawns != null && !respawns.isEmpty())
+				{
+					// Respawn customizado: não seta delay no spawnDat para não usar respawn automático
+					spawnDat.setRespawnMinDelay(-1);
+					spawnDat.setRespawnMaxDelay(-1);
+				}
+				else
+				{
+					// Usa spawn padrão do banco ou config
+					if (Config.RESPAWN_CUSTOM && Config.RAID_RESPAWN_IDS_LIST.contains(bossId))
+					{
+						spawnDat.setRespawnMinDelay(Config.MIN_RESPAWN);
+						spawnDat.setRespawnMaxDelay(Config.MAX_RESPAWN);
+					}
+					else
+					{
+						spawnDat.setRespawnMinDelay(rset.getInt("spawn_time"));
+						spawnDat.setRespawnMaxDelay(rset.getInt("random_time"));
+					}
+				}
+				
+				addNewSpawn(spawnDat, rset.getLong("respawn_time"), rset.getDouble("currentHP"), rset.getDouble("currentMP"), false);
+			}
+			
+			_log.info("RaidBossSpawnManager: Loaded " + _bosses.size() + " instances.");
+			_log.info("RaidBossSpawnManager: Scheduled " + _schedules.size() + " instances.");
+			
+		}
+		catch (SQLException e)
+		{
+			_log.warning("RaidBossSpawnManager: Couldnt load raidboss_spawnlist table.");
+		}
+		catch (Exception e)
+		{
+			_log.log(Level.WARNING, "Error while initializing RaidBossSpawnManager: " + e.getMessage(), e);
+		}
 	}
-
+	
 	public static RaidBossSpawnManager getInstance()
 	{
 		return SingletonHolder._instance;
 	}
 	
-//	private void init()
-//	{
-//		try (Connection con = ConnectionPool.getConnection())
-//		{
-//			PreparedStatement statement = con.prepareStatement("SELECT * from raidboss_spawnlist ORDER BY boss_id");
-//			ResultSet rset = statement.executeQuery();
-//			
-//			while (rset.next())
-//			{
-//				final NpcTemplate template = getValidTemplate(rset.getInt("boss_id"));
-//				if (template != null)
-//				{
-//					final L2Spawn spawnDat = new L2Spawn(template);
-//					spawnDat.setLoc(rset.getInt("loc_x"), rset.getInt("loc_y"), rset.getInt("loc_z"), rset.getInt("heading"));
-//					if(Config.RESPAWN_CUSTOM && Config.RAID_RESPAWN_IDS_LIST.contains(Integer.valueOf(template.getNpcId())))
-//					{
-//						spawnDat.setRespawnMinDelay(Config.MIN_RESPAWN);
-//						spawnDat.setRespawnMaxDelay(Config.MAX_RESPAWN);
-//					}
-//					else
-//					{
-//						spawnDat.setRespawnMinDelay(rset.getInt("spawn_time"));
-//						spawnDat.setRespawnMaxDelay(rset.getInt("random_time"));
-//					}
-//				//	spawnDat.setRespawnMinDelay(rset.getInt("spawn_time"));
-//				//	spawnDat.setRespawnMaxDelay(rset.getInt("random_time"));
-//					
-//					addNewSpawn(spawnDat, rset.getLong("respawn_time"), rset.getDouble("currentHP"), rset.getDouble("currentMP"), false);
-//				}
-//				else
-//				{
-//					_log.warning("RaidBossSpawnManager: Could not load raidboss #" + rset.getInt("boss_id") + " from DB");
-//				}
-//			}
-//			
-//			_log.info("RaidBossSpawnManager: Loaded " + _bosses.size() + " instances.");
-//			_log.info("RaidBossSpawnManager: Scheduled " + _schedules.size() + " instances.");
-//			
-//			rset.close();
-//			statement.close();
-//		}
-//		catch (SQLException e)
-//		{
-//			_log.warning("RaidBossSpawnManager: Couldnt load raidboss_spawnlist table.");
-//		}
-//		catch (Exception e)
-//		{
-//			_log.log(Level.WARNING, "Error while initializing RaidBossSpawnManager: " + e.getMessage(), e);
-//		}
-//	}
+	// private void init()
+	// {
+	// try (Connection con = ConnectionPool.getConnection())
+	// {
+	// PreparedStatement statement = con.prepareStatement("SELECT * from raidboss_spawnlist ORDER BY boss_id");
+	// ResultSet rset = statement.executeQuery();
+	//
+	// while (rset.next())
+	// {
+	// final NpcTemplate template = getValidTemplate(rset.getInt("boss_id"));
+	// if (template != null)
+	// {
+	// final L2Spawn spawnDat = new L2Spawn(template);
+	// spawnDat.setLoc(rset.getInt("loc_x"), rset.getInt("loc_y"), rset.getInt("loc_z"), rset.getInt("heading"));
+	// if(Config.RESPAWN_CUSTOM && Config.RAID_RESPAWN_IDS_LIST.contains(Integer.valueOf(template.getNpcId())))
+	// {
+	// spawnDat.setRespawnMinDelay(Config.MIN_RESPAWN);
+	// spawnDat.setRespawnMaxDelay(Config.MAX_RESPAWN);
+	// }
+	// else
+	// {
+	// spawnDat.setRespawnMinDelay(rset.getInt("spawn_time"));
+	// spawnDat.setRespawnMaxDelay(rset.getInt("random_time"));
+	// }
+	// // spawnDat.setRespawnMinDelay(rset.getInt("spawn_time"));
+	// // spawnDat.setRespawnMaxDelay(rset.getInt("random_time"));
+	//
+	// addNewSpawn(spawnDat, rset.getLong("respawn_time"), rset.getDouble("currentHP"), rset.getDouble("currentMP"), false);
+	// }
+	// else
+	// {
+	// _log.warning("RaidBossSpawnManager: Could not load raidboss #" + rset.getInt("boss_id") + " from DB");
+	// }
+	// }
+	//
+	// _log.info("RaidBossSpawnManager: Loaded " + _bosses.size() + " instances.");
+	// _log.info("RaidBossSpawnManager: Scheduled " + _schedules.size() + " instances.");
+	//
+	// rset.close();
+	// statement.close();
+	// }
+	// catch (SQLException e)
+	// {
+	// _log.warning("RaidBossSpawnManager: Couldnt load raidboss_spawnlist table.");
+	// }
+	// catch (Exception e)
+	// {
+	// _log.log(Level.WARNING, "Error while initializing RaidBossSpawnManager: " + e.getMessage(), e);
+	// }
+	// }
 	public void updateStatus(L2RaidBossInstance boss, boolean isBossDead)
 	{
-	    if (!_storedInfo.containsKey(boss.getNpcId()))
-	        return;
-	    
-	    final StatsSet info = _storedInfo.get(boss.getNpcId());
-	    
-	    if (isBossDead)
-	    {
-	        boss.setRaidStatus(StatusEnum.DEAD);
-	        
-	        long delayMillis = TimeRaidBossManager.getInstance().getMillisUntilNextRespawn(boss.getNpcId());
-	        if (delayMillis <= 0)
-	        {
-	            final int respawnDelay = boss.getSpawn().getRespawnMinDelay() 
-	                                   + Rnd.get(-boss.getSpawn().getRespawnMaxDelay(), boss.getSpawn().getRespawnMaxDelay());
-	            delayMillis = respawnDelay * 3600000L;
-	        }
-	        
-	        final long respawnTime = System.currentTimeMillis() + delayMillis;
-	        
-	        info.set("currentHP", boss.getMaxHp());
-	        info.set("currentMP", boss.getMaxMp());
-	        info.set("respawnTime", respawnTime);
-	        
-	        if (!_schedules.containsKey(boss.getNpcId()))
-	        {
-	            long totalMinutes = delayMillis / 60000;
-	            long hours = totalMinutes / 60;
-	            long minutes = totalMinutes % 60;
-	            
-	            _log.info("RaidBoss: " + boss.getName() + " - " 
-	                + new SimpleDateFormat("dd-MM-yyyy HH:mm").format(respawnTime) 
-	                + String.format(" (%dh %02dm).", hours, minutes));
-	            
-	            _schedules.put(boss.getNpcId(), ThreadPool.schedule(new spawnSchedule(boss.getNpcId()), delayMillis));
-	            updateDb();
-	            if (Config.LIST_RAID_BOSS_IDS.contains(boss.getNpcId()))
-	                RaidBossInfoManager.getInstance().updateRaidBossInfo(boss.getNpcId(), respawnTime);
-	        }
-	    }
-	    else
-	    {
-	        boss.setRaidStatus(StatusEnum.ALIVE);
-	        
-	        info.set("currentHP", boss.getCurrentHp());
-	        info.set("currentMP", boss.getCurrentMp());
-	        info.set("respawnTime", 0L);
-	    }
-	    
-	    _storedInfo.put(boss.getNpcId(), info);
+		if (!_storedInfo.containsKey(boss.getNpcId()))
+			return;
+		
+		final StatsSet info = _storedInfo.get(boss.getNpcId());
+		
+		if (isBossDead)
+		{
+			boss.setRaidStatus(StatusEnum.DEAD);
+			
+			long delayMillis = TimeRaidBossManager.getInstance().getMillisUntilNextRespawn(boss.getNpcId());
+			if (delayMillis <= 0)
+			{
+				final int respawnDelay = boss.getSpawn().getRespawnMinDelay() + Rnd.get(-boss.getSpawn().getRespawnMaxDelay(), boss.getSpawn().getRespawnMaxDelay());
+				delayMillis = respawnDelay * 3600000L;
+			}
+			
+			final long respawnTime = System.currentTimeMillis() + delayMillis;
+			
+			info.set("currentHP", boss.getMaxHp());
+			info.set("currentMP", boss.getMaxMp());
+			info.set("respawnTime", respawnTime);
+			
+			if (!_schedules.containsKey(boss.getNpcId()))
+			{
+				long totalMinutes = delayMillis / 60000;
+				long hours = totalMinutes / 60;
+				long minutes = totalMinutes % 60;
+				
+				_log.info("RaidBoss: " + boss.getName() + " - " + new SimpleDateFormat("dd-MM-yyyy HH:mm").format(respawnTime) + String.format(" (%dh %02dm).", hours, minutes));
+				
+				_schedules.put(boss.getNpcId(), ThreadPool.schedule(new spawnSchedule(boss.getNpcId()), delayMillis));
+				updateDb();
+				if (Config.LIST_RAID_BOSS_IDS.contains(boss.getNpcId()))
+					RaidBossInfoManager.getInstance().updateRaidBossInfo(boss.getNpcId(), respawnTime);
+			}
+		}
+		else
+		{
+			boss.setRaidStatus(StatusEnum.ALIVE);
+			
+			info.set("currentHP", boss.getCurrentHp());
+			info.set("currentMP", boss.getCurrentMp());
+			info.set("respawnTime", 0L);
+		}
+		
+		_storedInfo.put(boss.getNpcId(), info);
 	}
-
-
+	
 	private static class spawnSchedule implements Runnable
 	{
 		private final int bossId;
@@ -254,56 +260,56 @@ public class RaidBossSpawnManager
 				_bosses.put(bossId, raidboss);
 				if (Config.ANNOUNCE_BOSS_ALIVE)
 				{
-					Broadcast.gameAnnounceToOnlinePlayers("Boss: " + raidboss.getName() + " has spawned in the world!");	
+					Broadcast.gameAnnounceToOnlinePlayers("Boss: " + raidboss.getName() + " has spawned in the world!");
 				}
 			}
 			
 			_schedules.remove(bossId);
 			if (Config.LIST_RAID_BOSS_IDS.contains(bossId))
-		          RaidBossInfoManager.getInstance().updateRaidBossInfo(bossId, 0);
+				RaidBossInfoManager.getInstance().updateRaidBossInfo(bossId, 0);
 		}
 	}
 	
-//	public void updateStatus(L2RaidBossInstance boss, boolean isBossDead)
-//	{
-//		if (!_storedInfo.containsKey(boss.getNpcId()))
-//			return;
-//		
-//		final StatsSet info = _storedInfo.get(boss.getNpcId());
-//		
-//		if (isBossDead)
-//		{
-//			boss.setRaidStatus(StatusEnum.DEAD);
-//			
-//			// getRespawnMinDelay() is used as fixed timer, while getRespawnMaxDelay() is used as random timer.
-//			final int respawnDelay = boss.getSpawn().getRespawnMinDelay() + Rnd.get(-boss.getSpawn().getRespawnMaxDelay(), boss.getSpawn().getRespawnMaxDelay());
-//			final long respawnTime = Calendar.getInstance().getTimeInMillis() + (respawnDelay * 3600000);
-//			
-//			info.set("currentHP", boss.getMaxHp());
-//			info.set("currentMP", boss.getMaxMp());
-//			info.set("respawnTime", respawnTime);
-//			
-//			if (!_schedules.containsKey(boss.getNpcId()))
-//			{
-//				_log.info("RaidBoss: " + boss.getName() + " - " + new SimpleDateFormat("dd-MM-yyyy HH:mm").format(respawnTime) + " (" + respawnDelay + "h).");
-//				
-//				_schedules.put(boss.getNpcId(), ThreadPoolManager.getInstance().scheduleGeneral(new spawnSchedule(boss.getNpcId()), respawnDelay * 3600000));
-//				updateDb();
-//				if (Config.LIST_RAID_BOSS_IDS.contains(boss.getNpcId()))
-//					RaidBossInfoManager.getInstance().updateRaidBossInfo(boss.getNpcId(), respawnTime);
-//			}
-//		}
-//		else
-//		{
-//			boss.setRaidStatus(StatusEnum.ALIVE);
-//			
-//			info.set("currentHP", boss.getCurrentHp());
-//			info.set("currentMP", boss.getCurrentMp());
-//			info.set("respawnTime", 0L);
-//		}
-//		
-//		_storedInfo.put(boss.getNpcId(), info);
-//	}
+	// public void updateStatus(L2RaidBossInstance boss, boolean isBossDead)
+	// {
+	// if (!_storedInfo.containsKey(boss.getNpcId()))
+	// return;
+	//
+	// final StatsSet info = _storedInfo.get(boss.getNpcId());
+	//
+	// if (isBossDead)
+	// {
+	// boss.setRaidStatus(StatusEnum.DEAD);
+	//
+	// // getRespawnMinDelay() is used as fixed timer, while getRespawnMaxDelay() is used as random timer.
+	// final int respawnDelay = boss.getSpawn().getRespawnMinDelay() + Rnd.get(-boss.getSpawn().getRespawnMaxDelay(), boss.getSpawn().getRespawnMaxDelay());
+	// final long respawnTime = Calendar.getInstance().getTimeInMillis() + (respawnDelay * 3600000);
+	//
+	// info.set("currentHP", boss.getMaxHp());
+	// info.set("currentMP", boss.getMaxMp());
+	// info.set("respawnTime", respawnTime);
+	//
+	// if (!_schedules.containsKey(boss.getNpcId()))
+	// {
+	// _log.info("RaidBoss: " + boss.getName() + " - " + new SimpleDateFormat("dd-MM-yyyy HH:mm").format(respawnTime) + " (" + respawnDelay + "h).");
+	//
+	// _schedules.put(boss.getNpcId(), ThreadPoolManager.getInstance().scheduleGeneral(new spawnSchedule(boss.getNpcId()), respawnDelay * 3600000));
+	// updateDb();
+	// if (Config.LIST_RAID_BOSS_IDS.contains(boss.getNpcId()))
+	// RaidBossInfoManager.getInstance().updateRaidBossInfo(boss.getNpcId(), respawnTime);
+	// }
+	// }
+	// else
+	// {
+	// boss.setRaidStatus(StatusEnum.ALIVE);
+	//
+	// info.set("currentHP", boss.getCurrentHp());
+	// info.set("currentMP", boss.getCurrentMp());
+	// info.set("respawnTime", 0L);
+	// }
+	//
+	// _storedInfo.put(boss.getNpcId(), info);
+	// }
 	
 	public void addNewSpawn(L2Spawn spawnDat, long respawnTime, double currentHP, double currentMP, boolean storeInDb)
 	{
@@ -538,44 +544,45 @@ public class RaidBossSpawnManager
 	{
 		protected static final RaidBossSpawnManager _instance = new RaidBossSpawnManager();
 	}
+	
 	public void scheduleRaidBossSpawnsWithNpcConfig()
 	{
-	    if (!Config.WAIT_TIME_FOR_SPAWN_ALL_NPCS)
-	    {
-	        // Se não quer esperar horário, spawna imediatamente
-	        _log.info("RaidBossSpawnManager: Spawnando todos os raid bosses imediatamente.");
-	        cleanUp();
-	        reloadBosses();
-	        return;
-	    }
-
-	    try
-	    {
-	        String[] parts = Config.SPAWN_ALL_NPCS_TIME_OPEN_SERVER.split(":");
-	        int hour = Integer.parseInt(parts[0]);
-	        int minute = Integer.parseInt(parts[1]);
-
-	        LocalDateTime now = LocalDateTime.now();
-	        LocalDateTime spawnTime = now.withHour(hour).withMinute(minute).withSecond(0).withNano(0);
-
-	        if (now.isAfter(spawnTime))
-	            spawnTime = spawnTime.plusDays(1);
-
-	        long delayMillis = Duration.between(now, spawnTime).toMillis();
-
-	        _log.info("RaidBossSpawnManager: Raid bosses agendados para spawnar em " + spawnTime.toString());
-
-	        ThreadPool.schedule(() -> {
-	            cleanUp();
-	            reloadBosses();
-
-	            _log.info("RaidBossSpawnManager: Todos Raid Bosses foram spawnados às " + LocalDateTime.now().toString());
-	        }, delayMillis);
-	    }
-	    catch (Exception e)
-	    {
-	        _log.warning("RaidBossSpawnManager: Erro ao agendar Raid Boss spawns: " + e.getMessage());
-	    }
+		if (!Config.WAIT_TIME_FOR_SPAWN_ALL_NPCS)
+		{
+			// Se não quer esperar horário, spawna imediatamente
+			_log.info("RaidBossSpawnManager: Spawnando todos os raid bosses imediatamente.");
+			cleanUp();
+			reloadBosses();
+			return;
+		}
+		
+		try
+		{
+			String[] parts = Config.SPAWN_ALL_NPCS_TIME_OPEN_SERVER.split(":");
+			int hour = Integer.parseInt(parts[0]);
+			int minute = Integer.parseInt(parts[1]);
+			
+			LocalDateTime now = LocalDateTime.now();
+			LocalDateTime spawnTime = now.withHour(hour).withMinute(minute).withSecond(0).withNano(0);
+			
+			if (now.isAfter(spawnTime))
+				spawnTime = spawnTime.plusDays(1);
+			
+			long delayMillis = Duration.between(now, spawnTime).toMillis();
+			
+			_log.info("RaidBossSpawnManager: Raid bosses agendados para spawnar em " + spawnTime.toString());
+			
+			ThreadPool.schedule(() -> {
+				cleanUp();
+				reloadBosses();
+				
+				_log.info("RaidBossSpawnManager: Todos Raid Bosses foram spawnados às " + LocalDateTime.now().toString());
+			}, delayMillis);
+		}
+		catch (Exception e)
+		{
+			_log.warning("RaidBossSpawnManager: Erro ao agendar Raid Boss spawns: " + e.getMessage());
+		}
 	}
-
+	
 }

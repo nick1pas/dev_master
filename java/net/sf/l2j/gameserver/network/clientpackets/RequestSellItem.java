@@ -2,6 +2,7 @@ package net.sf.l2j.gameserver.network.clientpackets;
 
 import net.sf.l2j.Config;
 import net.sf.l2j.gameserver.cache.HtmCache;
+import net.sf.l2j.gameserver.instancemanager.custom.CustomAugmentManager;
 import net.sf.l2j.gameserver.model.L2Object;
 import net.sf.l2j.gameserver.model.actor.L2Npc;
 import net.sf.l2j.gameserver.model.actor.Player;
@@ -93,6 +94,8 @@ public final class RequestSellItem extends L2GameClientPacket
 				return;
 			}
 			item = player.getInventory().destroyItem("Sell", i.getId(), i.getValue(), player, merchant);
+			
+			CustomAugmentManager.getInstance().deleteWeaponAugment(player, item);
 		}
 		
 		player.addAdena("Sell", (int)totalPrice, merchant, false);

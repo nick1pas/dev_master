@@ -87,6 +87,7 @@ import net.sf.l2j.gameserver.datatables.SpellbookTable;
 import net.sf.l2j.gameserver.datatables.StaticObjects;
 import net.sf.l2j.gameserver.datatables.SummonItemsData;
 import net.sf.l2j.gameserver.datatables.TeleportLocationTable;
+import net.sf.l2j.gameserver.datatables.xml.AugmentStoneData;
 import net.sf.l2j.gameserver.datatables.xml.DressMeData;
 import net.sf.l2j.gameserver.datatables.xml.EnchantSkillRateData;
 import net.sf.l2j.gameserver.datatables.xml.FakePcsTable;
@@ -137,6 +138,7 @@ import net.sf.l2j.gameserver.instancemanager.custom.ChatBanManager;
 import net.sf.l2j.gameserver.instancemanager.custom.ChatGlobalManager;
 import net.sf.l2j.gameserver.instancemanager.custom.ChatHeroManager;
 import net.sf.l2j.gameserver.instancemanager.custom.ChatVipManager;
+import net.sf.l2j.gameserver.instancemanager.custom.CustomAugmentManager;
 import net.sf.l2j.gameserver.instancemanager.custom.EpicZoneManager;
 import net.sf.l2j.gameserver.instancemanager.custom.FarmZoneManager;
 import net.sf.l2j.gameserver.instancemanager.custom.HeroManagerCustom;
@@ -388,6 +390,8 @@ public class GameServer
 		DressMeData.getInstance();
 		
 		StringUtil.printSection("Custom World");
+		AugmentStoneData.getInstance();
+		CustomAugmentManager.getInstance().load();
 		TalentData.getInstance();
 		IPManager.getInstance();
 		RouletteData.getInstance();

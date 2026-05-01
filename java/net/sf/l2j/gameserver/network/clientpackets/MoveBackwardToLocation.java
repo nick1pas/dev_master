@@ -4,108 +4,199 @@ import java.nio.BufferUnderflowException;
 
 import net.sf.l2j.Config;
 import net.sf.l2j.gameserver.ai.CtrlIntention;
+import net.sf.l2j.gameserver.geoengine.GeoEngine;
 import net.sf.l2j.gameserver.model.Location;
 import net.sf.l2j.gameserver.model.actor.Player;
 import net.sf.l2j.gameserver.network.SystemMessageId;
 import net.sf.l2j.gameserver.network.serverpackets.ActionFailed;
 import net.sf.l2j.gameserver.network.serverpackets.EnchantResult;
 import net.sf.l2j.gameserver.network.serverpackets.StopMove;
-import net.sf.l2j.gameserver.util.Util;
 
 public class MoveBackwardToLocation extends L2GameClientPacket
 {
+	private static final int MAX_MOVE_DISTANCE = 9900;
+	private static final int MAX_ORIGIN_DESYNC = 750;
+	private static final int MAX_Z_DIFF_WITHOUT_GEO = 500;
 	
 	private int _targetX;
 	private int _targetY;
 	private int _targetZ;
+	
 	private int _originX;
 	private int _originY;
 	private int _originZ;
 	
-	@SuppressWarnings("unused")
-	private int _moveMovement;
+	private boolean _malformed;
 	
 	@Override
 	protected void readImpl()
 	{
-		_targetX = readD();
-		_targetY = readD();
-		_targetZ = readD();
-		_originX = readD();
-		_originY = readD();
-		_originZ = readD();
-		
 		try
 		{
-			_moveMovement = readD(); // is 0 if cursor keys are used 1 if mouse is used
+			_targetX = readD();
+			_targetY = readD();
+			_targetZ = readD();
+			
+			_originX = readD();
+			_originY = readD();
+			_originZ = readD();
+			
+			readD();
 		}
 		catch (BufferUnderflowException e)
 		{
-			if (Config.L2WALKER_PROTECTION)
-			{
-				final Player player = getClient().getActiveChar();
-				if (player != null)
-					player.logout(false);
-			}
+			_malformed = true;
 		}
 	}
 	
 	@Override
 	protected void runImpl()
 	{
-		final Player activeChar = getClient().getActiveChar();
-		if (activeChar == null)
+		final Player player = getClient().getActiveChar();
+		if (player == null)
 			return;
 		
-		if (activeChar.isOutOfControl())
+		if (_malformed)
 		{
-			activeChar.sendPacket(ActionFailed.STATIC_PACKET);
-			return;
-		}
-		
-		if (activeChar.getActiveEnchantItem() != null)
-		{
-			activeChar.setActiveEnchantItem(null);
-			activeChar.sendPacket(EnchantResult.CANCELLED);
-			activeChar.sendPacket(SystemMessageId.ENCHANT_SCROLL_CANCELLED);
-		}
-		
-		if (_targetX == _originX && _targetY == _originY && _targetZ == _originZ)
-		{
-			activeChar.sendPacket(new StopMove(activeChar));
-			return;
-		}
-		
-		// Correcting targetZ from floor level to head level
-		_targetZ += activeChar.getCollisionHeight();
-		
-		if (activeChar.getTeleMode() > 0)
-		{
-			if (activeChar.getTeleMode() == 1)
-				activeChar.setTeleMode(0);
+			player.sendPacket(ActionFailed.STATIC_PACKET);
 			
-			activeChar.sendPacket(ActionFailed.STATIC_PACKET);
-			activeChar.teleToLocation(_targetX, _targetY, _targetZ, 0);
+			if (Config.L2WALKER_PROTECTION)
+				player.increaseMovePacketViolation();
+			
 			return;
 		}
 		
+		if (player.isOutOfControl() || player.isMovementDisabled())
+		{
+			player.sendPacket(ActionFailed.STATIC_PACKET);
+			return;
+		}
+		
+		cancelEnchant(player);
+		
+		if (isSameLocation())
+		{
+			player.sendPacket(new StopMove(player));
+			return;
+		}
+		
+		if (handleTeleportMode(player))
+			return;
+		
+		if (!isValidOrigin(player))
+		{
+			player.sendPacket(ActionFailed.STATIC_PACKET);
+			
+			if (Config.L2WALKER_PROTECTION)
+				player.increaseMovePacketViolation();
+			
+			return;
+		}
+		
+		if (!isValidDistance())
+		{
+			player.sendPacket(ActionFailed.STATIC_PACKET);
+			
+			if (Config.L2WALKER_PROTECTION)
+				player.increaseMovePacketViolation();
+			
+			return;
+		}
+		
+		Location destination = buildValidatedDestination(player);
+		
+		if (destination == null)
+		{
+			player.sendPacket(ActionFailed.STATIC_PACKET);
+			
+			if (Config.L2WALKER_PROTECTION)
+				player.increaseMovePacketViolation();
+			
+			return;
+		}
+		
+		player.getAI().setIntention(CtrlIntention.MOVE_TO, destination);
+	}
+	
+	private static void cancelEnchant(Player player)
+	{
+		if (player.getActiveEnchantItem() == null)
+			return;
+		
+		player.setActiveEnchantItem(null);
+		player.sendPacket(EnchantResult.CANCELLED);
+		player.sendPacket(SystemMessageId.ENCHANT_SCROLL_CANCELLED);
+	}
+	
+	private boolean isSameLocation()
+	{
+		return _targetX == _originX && _targetY == _originY && _targetZ == _originZ;
+	}
+	
+	private boolean handleTeleportMode(Player player)
+	{
+		if (player.getTeleMode() <= 0)
+			return false;
+		
+		if (!player.isGM())
+		{
+			player.setTeleMode(0);
+			player.sendPacket(ActionFailed.STATIC_PACKET);
+			return true;
+		}
+		
+		if (player.getTeleMode() == 1)
+			player.setTeleMode(0);
+		
+		player.sendPacket(ActionFailed.STATIC_PACKET);
+		player.teleToLocation(_targetX, _targetY, _targetZ, 0);
+		return true;
+	}
+	
+	private boolean isValidOrigin(Player player)
+	{
+		double dx = _originX - player.getX();
+		double dy = _originY - player.getY();
+		double dz = _originZ - player.getZ();
+		
+		return (dx * dx + dy * dy + dz * dz) <= MAX_ORIGIN_DESYNC * MAX_ORIGIN_DESYNC;
+	}
+	
+	private boolean isValidDistance()
+	{
 		double dx = _targetX - _originX;
 		double dy = _targetY - _originY;
 		
-		if ((dx * dx + dy * dy) > 98010000) // 9900*9900
-		{
-			activeChar.sendPacket(ActionFailed.STATIC_PACKET);
-			return;
-		}
-		// Check async range.
-		dx = _originX - activeChar.getX();
-		dy = _originY - activeChar.getY();
-		double dz1 = _originZ - activeChar.getZ();
-		float diff = (float) Math.sqrt(dx * dx + dy * dy + dz1 * dz1);
-		int heading = Util.calculateHeadingFrom(_originX, _originY, activeChar.getX(), activeChar.getY());
-		if (Math.abs(activeChar.getHeading() - heading) > 16000)
-			diff = diff * -1;
+		return (dx * dx + dy * dy) <= MAX_MOVE_DISTANCE * MAX_MOVE_DISTANCE;
+	}
+	
+	private Location buildValidatedDestination(Player player)
+	{
+		int targetX = _targetX;
+		int targetY = _targetY;
+		double targetZ = _targetZ + player.getCollisionHeight();
 		
-		activeChar.getAI().setIntention(CtrlIntention.MOVE_TO, new Location(_targetX, _targetY, _targetZ));
+		if (Config.ENABLE_GEODATA)
+		{
+			if (!GeoEngine.getInstance().canMoveToTarget(player.getX(), player.getY(), player.getZ(), targetX, targetY, (int) targetZ))
+			{
+				Location validLoc = GeoEngine.getInstance().canMoveToTargetLoc(player.getX(), player.getY(), player.getZ(), targetX, targetY, (int) targetZ);
+				
+				if (validLoc == null)
+					return null;
+				
+				return validLoc;
+			}
+			
+			int geoZ = GeoEngine.getInstance().getHeight(targetX, targetY,(int) targetZ);
+			return new Location(targetX, targetY, geoZ);
+		}
+		
+		int zDiff = Math.abs((int)targetZ - player.getZ());
+		
+		if (zDiff > MAX_Z_DIFF_WITHOUT_GEO)
+			return null;
+		
+		return new Location(targetX, targetY, (int)targetZ);
 	}
 }

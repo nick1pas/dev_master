@@ -3,6 +3,8 @@ package net.sf.l2j.gameserver.network.clientpackets;
 import java.util.Arrays;
 
 import net.sf.l2j.Config;
+import net.sf.l2j.gameserver.datatables.SkillTable;
+import net.sf.l2j.gameserver.instancemanager.custom.CustomAugmentManager;
 import net.sf.l2j.gameserver.model.L2Augmentation;
 import net.sf.l2j.gameserver.model.L2Skill;
 import net.sf.l2j.gameserver.model.L2World;
@@ -89,16 +91,16 @@ public final class AddTradeItem extends L2GameClientPacket
 				final L2Skill augSkill = augment.getSkill();
 				if (augSkill != null && augSkill.isPassive())
 				{
-					player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_ALL, "","   {Trade} " + Status.getName() + " Enchanted + " + Status.getEnchantLevel() + " Argument " + augSkill.getName() + " Passive"));
-					partner.sendPacket(new CreatureSay(0, Say2.PARTYROOM_ALL, "","   {Trade} " + Status.getName() + " Enchanted + " + Status.getEnchantLevel() + " Argument " + augSkill.getName() + " Passive"));
+					player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_ALL, "", "   {Trade} " + Status.getName() + " Enchanted + " + Status.getEnchantLevel() + " Argument " + augSkill.getName() + " Passive"));
+					partner.sendPacket(new CreatureSay(0, Say2.PARTYROOM_ALL, "", "   {Trade} " + Status.getName() + " Enchanted + " + Status.getEnchantLevel() + " Argument " + augSkill.getName() + " Passive"));
 				}
-				//partner.sendMessage(String.format("%s - %s ", Status.getName(), "Passive " + augSkill.getName()));
+				// partner.sendMessage(String.format("%s - %s ", Status.getName(), "Passive " + augSkill.getName()));
 				else if (augSkill != null && augSkill.isActive())
 				{
-					player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_ALL, "","   {Trade} " + Status.getName() + " Enchanted + " + Status.getEnchantLevel() + " Argument " + augSkill.getName() + " Active"));
-					partner.sendPacket(new CreatureSay(0, Say2.PARTYROOM_ALL, "","   {Trade} " + Status.getName() + " Enchanted + " + Status.getEnchantLevel() + " Argument " + augSkill.getName() + " Active"));
+					player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_ALL, "", "   {Trade} " + Status.getName() + " Enchanted + " + Status.getEnchantLevel() + " Argument " + augSkill.getName() + " Active"));
+					partner.sendPacket(new CreatureSay(0, Say2.PARTYROOM_ALL, "", "   {Trade} " + Status.getName() + " Enchanted + " + Status.getEnchantLevel() + " Argument " + augSkill.getName() + " Active"));
 				}
-				//partner.sendMessage(String.format("%s - %s ", Status.getName(), "Active " + augSkill.getName()));
+				// partner.sendMessage(String.format("%s - %s ", Status.getName(), "Active " + augSkill.getName()));
 				else if (augSkill != null && augSkill.isChance())
 				{
 					partner.sendMessage(String.format("%s - %s ", Status.getName(), "Chance " + augSkill.getName()));
@@ -109,15 +111,40 @@ public final class AddTradeItem extends L2GameClientPacket
 				partner.sendMessage("======= Stats ========");
 				Arrays.asList(augment.getDetails()).forEach(partner::sendMessage);
 			}
+			
+			int[] data = CustomAugmentManager.getInstance().getAugment(Status.getObjectId());
+			
+			if (data != null)
+			{
+				int skillId = data[0];
+				int level = data[1];
+				
+				L2Skill skill = SkillTable.getInstance().getInfo(skillId, level);
+				
+				if (skill != null)
+				{
+					String type;
+					
+					if (skill.isPassive())
+						type = "Passive";
+					else if (skill.isActive())
+						type = "Active";
+					else if (skill.isChance())
+						type = "Chance";
+					else
+						type = "Unknown";
+					
+					String msg = "   {Trade} " + Status.getName() + " Enchanted + " + Status.getEnchantLevel() + " AugmentStone " + skill.getName() + " " + type;
+					
+					player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_ALL, "", msg));
+					partner.sendPacket(new CreatureSay(0, Say2.PARTYROOM_ALL, "", msg));
+				}
+			}
+			
 			player.sendPacket(new TradeOwnAdd(item));
 			player.sendPacket(new TradeItemUpdate(trade, player));
 			trade.getPartner().sendPacket(new TradeOtherAdd(item));
 		}
-		/*if (item != null)
-		{
-			player.sendPacket(new TradeOwnAdd(item));
-			player.sendPacket(new TradeItemUpdate(trade, player));
-			trade.getPartner().sendPacket(new TradeOtherAdd(item));
-		}*/
+
 	}
 }

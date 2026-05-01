@@ -34,6 +34,7 @@ import net.sf.l2j.gameserver.handler.itemhandlers.custom.AioItemClick;
 import net.sf.l2j.gameserver.handler.itemhandlers.custom.AllyNameChange;
 import net.sf.l2j.gameserver.handler.itemhandlers.custom.ApplySkins;
 import net.sf.l2j.gameserver.handler.itemhandlers.custom.AugmentSkills;
+import net.sf.l2j.gameserver.handler.itemhandlers.custom.AugmentStone;
 import net.sf.l2j.gameserver.handler.itemhandlers.custom.BoxRewards;
 import net.sf.l2j.gameserver.handler.itemhandlers.custom.ClanFull;
 import net.sf.l2j.gameserver.handler.itemhandlers.custom.ClassItem;
@@ -63,6 +64,7 @@ public class ItemHandler
 	
 	protected ItemHandler()
 	{
+		registerItemHandler(new AugmentStone());
 		//Items Handlers Customs
 		if(Config.ENABLE_AIO_SYSTEM)
 		{

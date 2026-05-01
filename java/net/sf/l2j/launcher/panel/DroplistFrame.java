@@ -319,20 +319,6 @@ public class DroplistFrame extends JDialog
 				
 				if (id.equals(query) || name.contains(q))
 				{
-					if (!hasDrops(npc))
-					{
-						int r = JOptionPane.showConfirmDialog(this, "Este NPC não possui droplist.\nDeseja criar uma agora?", "Criar Droplist", JOptionPane.YES_NO_OPTION);
-						
-						if (r != JOptionPane.YES_OPTION)
-							continue; // não adiciona à lista
-							
-						createEmptyDrops(npc, doc, f);
-						
-						doc = XmlUtil.load(f);
-						npcs = doc.getElementsByTagName("npc");
-						npc = (Element) npcs.item(i);
-					}
-					
 					result.add(parseNpc(npc, doc, f));
 				}
 				
@@ -354,28 +340,7 @@ public class DroplistFrame extends JDialog
 		
 		return npcBlock.substring(nextLineStart, nextLineEnd);
 	}
-	
-	private static void createEmptyDrops(Element npc, Document doc, File file)
-	{
-		try
-		{
-			String xml = Files.readString(file.toPath(), StandardCharsets.UTF_8);
-			
-			int npcId = Integer.parseInt(npc.getAttribute("id"));
-			
-			NpcDropData data = new NpcDropData();
-			data.npcId = npcId;
-			data.categories = new ArrayList<>(); // vazio
-			
-			xml = insertDropsBlock(xml, data);
-			
-			Files.writeString(file.toPath(), xml, StandardCharsets.UTF_8);
-		}
-		catch (Exception e)
-		{
-			throw new RuntimeException("Erro ao criar <drops> vazio", e);
-		}
-	}
+ 
 	
 	private NpcDropData chooseNpc(List<NpcDropData> list)
 	{
@@ -495,11 +460,7 @@ public class DroplistFrame extends JDialog
 		return type != null && ALLOWED_TYPES.contains(type);
 	}
 	
-	private static boolean hasDrops(Element npc)
-	{
-		NodeList drops = npc.getElementsByTagName("drops");
-		return drops.getLength() > 0;
-	}
+ 
 	
 	/* ================= XML ================= */
 	

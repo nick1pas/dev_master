@@ -23,6 +23,7 @@ import net.sf.l2j.event.tvt.VoicedTvTEvent;
 import net.sf.l2j.gameserver.handler.custom.CustomBypassHandler;
 import net.sf.l2j.gameserver.handler.voicedcommandhandlers.GainXpSpMod;
 import net.sf.l2j.gameserver.handler.voicedcommandhandlers.Repair;
+import net.sf.l2j.gameserver.handler.voicedcommandhandlers.VoicedAugmentStone;
 import net.sf.l2j.gameserver.handler.voicedcommandhandlers.VoicedBanking;
 import net.sf.l2j.gameserver.handler.voicedcommandhandlers.VoicedBossSpawn;
 import net.sf.l2j.gameserver.handler.voicedcommandhandlers.VoicedBuffs;
@@ -55,6 +56,7 @@ public class VoicedCommandHandler
 	
 	protected VoicedCommandHandler()
 	{
+		registerHandler(new VoicedAugmentStone());
 		registerHandler(new VoicedSoloFarm());
 		registerHandler(new VoicedStatus());
 		registerHandler(new VoicedTalent());

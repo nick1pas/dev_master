@@ -1,5 +1,6 @@
 package net.sf.l2j.gameserver.network.clientpackets;
 
+import net.sf.l2j.gameserver.instancemanager.custom.CustomAugmentManager;
 import net.sf.l2j.gameserver.model.actor.Player;
 import net.sf.l2j.gameserver.model.item.instance.ItemInstance;
 import net.sf.l2j.gameserver.model.item.kind.Item;
@@ -26,7 +27,6 @@ public class RequestUnEquipItem extends L2GameClientPacket
 		final Player activeChar = getClient().getActiveChar();
 		if (activeChar == null)
 			return;
-		
 		
 		ItemInstance item = activeChar.getInventory().getPaperdollItemByL2ItemId(_slot);
 		if (item == null)
@@ -57,6 +57,8 @@ public class RequestUnEquipItem extends L2GameClientPacket
 		{
 			itm.unChargeAllShots();
 			iu.addModifiedItem(itm);
+			CustomAugmentManager.getInstance().removeWeaponAugment(activeChar, itm);
+			
 		}
 		activeChar.sendPacket(iu);
 		activeChar.broadcastUserInfo();
@@ -77,6 +79,7 @@ public class RequestUnEquipItem extends L2GameClientPacket
 				sm.addItemName(unequipped[0]);
 			}
 			activeChar.sendPacket(sm);
+			
 		}
 	}
 }

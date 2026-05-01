@@ -1,5 +1,6 @@
 package net.sf.l2j.gameserver.network.clientpackets;
 
+import net.sf.l2j.gameserver.instancemanager.custom.CustomAugmentManager;
 import net.sf.l2j.gameserver.model.L2Skill;
 import net.sf.l2j.gameserver.model.L2World;
 import net.sf.l2j.gameserver.model.actor.Player;
@@ -121,8 +122,9 @@ public final class RequestCrystallizeItem extends L2GameClientPacket
 			ItemInstance[] unequipped = activeChar.getInventory().unEquipItemInSlotAndRecord(itemToRemove.getLocationSlot());
 			InventoryUpdate iu = new InventoryUpdate();
 			for (ItemInstance item : unequipped)
+			{
 				iu.addModifiedItem(item);
-			
+			}
 			activeChar.sendPacket(iu);
 			
 			SystemMessage msg;
@@ -138,6 +140,7 @@ public final class RequestCrystallizeItem extends L2GameClientPacket
 				msg.addItemName(itemToRemove.getItemId());
 			}
 			activeChar.sendPacket(msg);
+			
 		}
 		
 		// remove from inventory
@@ -154,6 +157,7 @@ public final class RequestCrystallizeItem extends L2GameClientPacket
 		
 		activeChar.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.S1_CRYSTALLIZED).addItemName(removedItem.getItemId()));
 		activeChar.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.EARNED_S2_S1_S).addItemName(createditem.getItemId()).addItemNumber(crystalAmount));
+		CustomAugmentManager.getInstance().removeWeaponAugment(activeChar, removedItem);
 		
 		activeChar.broadcastUserInfo();
 		L2World.getInstance().removeObject(removedItem);

@@ -33,6 +33,7 @@ import net.sf.l2j.gameserver.instancemanager.CrownManager;
 import net.sf.l2j.gameserver.instancemanager.DimensionalRiftManager;
 import net.sf.l2j.gameserver.instancemanager.PetitionManager;
 import net.sf.l2j.gameserver.instancemanager.SevenSigns;
+import net.sf.l2j.gameserver.instancemanager.custom.CustomAugmentManager;
 import net.sf.l2j.gameserver.instancemanager.custom.HeroManagerCustom;
 import net.sf.l2j.gameserver.model.GmAccessService;
 import net.sf.l2j.gameserver.model.L2Clan;
@@ -46,6 +47,9 @@ import net.sf.l2j.gameserver.model.entity.Castle;
 import net.sf.l2j.gameserver.model.entity.ClanHall;
 import net.sf.l2j.gameserver.model.entity.Couple;
 import net.sf.l2j.gameserver.model.entity.Siege;
+import net.sf.l2j.gameserver.model.item.instance.ItemInstance;
+import net.sf.l2j.gameserver.model.item.kind.Item;
+import net.sf.l2j.gameserver.model.item.kind.Weapon;
 import net.sf.l2j.gameserver.model.olympiad.Olympiad;
 import net.sf.l2j.gameserver.model.zone.ZoneId;
 import net.sf.l2j.gameserver.network.SystemMessageId;
@@ -476,15 +480,20 @@ public class EnterWorld extends L2GameClientPacket
 		RemoteClassMaster.showQuestionMark(activeChar);
 		activeChar.sendPacket(ActionFailed.STATIC_PACKET);
 
-		
-		if (HwidManager.getInstance().isMacAlreadyOnline(getClient()))
-		{
-
-			getClient().closeNow();
-			return;
-		}
-		
 		HwidManager.getInstance().onEnterWorld(getClient());
+		
+		for (ItemInstance item : activeChar.getInventory().getItems())
+		{
+			final Item it = item.getItem();
+			if (item.isEquipped())
+			{
+				if (it instanceof Weapon)
+				{
+					CustomAugmentManager.getInstance().onWeaponEquip(activeChar, item);
+				}
+			}
+		
+		}
 	}
 	
 	private static void engage(Player cha)

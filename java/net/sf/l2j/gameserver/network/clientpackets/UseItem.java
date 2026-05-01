@@ -312,11 +312,9 @@ public final class UseItem extends L2GameClientPacket
 				return;
 		}
 		
-
-		
 		if (item.isEquipable())
 		{
-		
+			
 			if (activeChar.isCastingNow() || activeChar.isCastingSimultaneouslyNow())
 			{
 				activeChar.sendPacket(SystemMessageId.CANNOT_USE_ITEM_WHILE_USING_MAGIC);
@@ -356,6 +354,8 @@ public final class UseItem extends L2GameClientPacket
 			
 			else
 				activeChar.useEquippableItem(item, true);
+			
+		
 		}
 		else
 		{
@@ -383,12 +383,8 @@ public final class UseItem extends L2GameClientPacket
 				
 				quest.notifyItemUse(item, activeChar, activeChar.getTarget());
 			}
+			
 		}
 	}
 	
-	public static final int[] FAKE_WEAPON_SKILLS =
-	{
-		24502,
-		24503
-	};
 }

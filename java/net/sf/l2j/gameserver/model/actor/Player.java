@@ -95,6 +95,7 @@ import net.sf.l2j.gameserver.instancemanager.custom.ChatBanManager;
 import net.sf.l2j.gameserver.instancemanager.custom.ChatGlobalManager;
 import net.sf.l2j.gameserver.instancemanager.custom.ChatHeroManager;
 import net.sf.l2j.gameserver.instancemanager.custom.ChatVipManager;
+import net.sf.l2j.gameserver.instancemanager.custom.CustomAugmentManager;
 import net.sf.l2j.gameserver.instancemanager.custom.HeroManagerCustom;
 import net.sf.l2j.gameserver.model.BlockList;
 import net.sf.l2j.gameserver.model.FishData;
@@ -154,6 +155,7 @@ import net.sf.l2j.gameserver.model.entity.Castle;
 import net.sf.l2j.gameserver.model.entity.Duel.DuelState;
 import net.sf.l2j.gameserver.model.entity.Hero;
 import net.sf.l2j.gameserver.model.entity.Siege;
+import net.sf.l2j.gameserver.model.holder.AugmentStoneHolder;
 import net.sf.l2j.gameserver.model.holder.DressMeHolder;
 import net.sf.l2j.gameserver.model.holder.IntIntHolder;
 import net.sf.l2j.gameserver.model.holder.SkillUseHolder;
@@ -1659,8 +1661,10 @@ public class Player extends Playable
 		int bodyPart = item.getItem().getBodyPart();
 		
 		if (item.getItem() instanceof Weapon)
+		{
 			item.unChargeAllShots();
-		
+			
+		}
 		if (!isEquipped)
 		{
 			// Se for equipar escudo, verifica arma duas mãos para desequipar e limpar skin
@@ -1705,7 +1709,7 @@ public class Player extends Playable
 				
 				if ((bodyPart & Item.SLOT_ALLWEAPON) != 0)
 					rechargeShots(true, true);
-				
+				CustomAugmentManager.getInstance().onWeaponEquip(this, item);
 			}
 			else
 				sendPacket(SystemMessageId.CANNOT_EQUIP_ITEM_DUE_TO_BAD_CONDITION);
@@ -1716,9 +1720,10 @@ public class Player extends Playable
 				sendPacket(SystemMessage.getSystemMessage(SystemMessageId.EQUIPMENT_S1_S2_REMOVED).addNumber(item.getEnchantLevel()).addItemName(item));
 			else
 				sendPacket(SystemMessage.getSystemMessage(SystemMessageId.S1_DISARMED).addItemName(item));
-			
+			CustomAugmentManager.getInstance().removeWeaponAugment(this, item);
 			int slot = getInventory().getSlotFromItem(item);
 			items = getInventory().unEquipItemInBodySlotAndRecord(slot);
+		
 			
 		}
 		
@@ -8907,33 +8912,7 @@ public class Player extends Playable
 		}
 		sendPacket(sl);
 	}
-	/*
-	 * public void removeItens() { // Remove Item RHAND if (Config.REMOVE_WEAPON) { ItemInstance rhand = getInventory().getPaperdollItem(Inventory.PAPERDOLL_RHAND); if (rhand != null) { ItemInstance[] unequipped = getInventory().unEquipItemInBodySlotAndRecord(rhand.getItem().getBodyPart());
-	 * InventoryUpdate iu = new InventoryUpdate(); for (ItemInstance element : unequipped) iu.addModifiedItem(element); sendPacket(iu); } } // Remove Item CHEST if (Config.REMOVE_CHEST) { ItemInstance chest = getInventory().getPaperdollItem(Inventory.PAPERDOLL_CHEST); if (chest != null) {
-	 * ItemInstance[] unequipped = getInventory().unEquipItemInBodySlotAndRecord(chest.getItem().getBodyPart()); InventoryUpdate iu = new InventoryUpdate(); for (ItemInstance element : unequipped) iu.addModifiedItem(element); sendPacket(iu); } } // Remove Item LEG if (Config.REMOVE_LEG) {
-	 * ItemInstance legs = getInventory().getPaperdollItem(Inventory.PAPERDOLL_LEGS); if (legs != null) { ItemInstance[] unequipped = getInventory().unEquipItemInBodySlotAndRecord(legs.getItem().getBodyPart()); InventoryUpdate iu = new InventoryUpdate(); for (ItemInstance element : unequipped)
-	 * iu.addModifiedItem(element); sendPacket(iu); } } }
-	 */
-	
-	/*
-	 * public void removeItensFinishOly() { // Remove Item RHAND ItemInstance rhand = getInventory().getPaperdollItem(Inventory.PAPERDOLL_RHAND); if (rhand != null && Config.LISTID_RESTRICT_OLY.contains(rhand.getItemId())) { ItemInstance[] unequipped =
-	 * getInventory().unEquipItemInBodySlotAndRecord(rhand.getItem().getBodyPart()); InventoryUpdate iu = new InventoryUpdate(); for (ItemInstance element : unequipped) iu.addModifiedItem(element); sendPacket(iu); } // Remove Item ESCUDO ItemInstance escudo =
-	 * getInventory().getPaperdollItem(Inventory.PAPERDOLL_LHAND); if (escudo != null && Config.LISTID_RESTRICT_OLY.contains(escudo.getItemId())) { ItemInstance[] unequipped = getInventory().unEquipItemInBodySlotAndRecord(escudo.getItem().getBodyPart()); InventoryUpdate iu = new InventoryUpdate();
-	 * for (ItemInstance element : unequipped) iu.addModifiedItem(element); sendPacket(iu); } // Remove Item CHEST ItemInstance chest = getInventory().getPaperdollItem(Inventory.PAPERDOLL_CHEST); if (chest != null && Config.LISTID_RESTRICT_OLY.contains(chest.getItemId())) { ItemInstance[] unequipped
-	 * = getInventory().unEquipItemInBodySlotAndRecord(chest.getItem().getBodyPart()); InventoryUpdate iu = new InventoryUpdate(); for (ItemInstance element : unequipped) iu.addModifiedItem(element); sendPacket(iu); } // Remove Item LEG ItemInstance legs =
-	 * getInventory().getPaperdollItem(Inventory.PAPERDOLL_LEGS); if (legs != null && Config.LISTID_RESTRICT_OLY.contains(legs.getItemId())) { ItemInstance[] unequipped = getInventory().unEquipItemInBodySlotAndRecord(legs.getItem().getBodyPart()); InventoryUpdate iu = new InventoryUpdate(); for
-	 * (ItemInstance element : unequipped) iu.addModifiedItem(element); sendPacket(iu); } // Remove Item Gloves ItemInstance gloves = getInventory().getPaperdollItem(Inventory.PAPERDOLL_GLOVES); if (gloves != null && Config.LISTID_RESTRICT_OLY.contains(gloves.getItemId())) { ItemInstance[]
-	 * unequipped = getInventory().unEquipItemInBodySlotAndRecord(gloves.getItem().getBodyPart()); InventoryUpdate iu = new InventoryUpdate(); for (ItemInstance element : unequipped) iu.addModifiedItem(element); sendPacket(iu); } // Remove Item boots ItemInstance boots =
-	 * getInventory().getPaperdollItem(Inventory.PAPERDOLL_FEET); if (boots != null && Config.LISTID_RESTRICT_OLY.contains(boots.getItemId())) { ItemInstance[] unequipped = getInventory().unEquipItemInBodySlotAndRecord(boots.getItem().getBodyPart()); InventoryUpdate iu = new InventoryUpdate(); for
-	 * (ItemInstance element : unequipped) iu.addModifiedItem(element); sendPacket(iu); } // Remove Item helmet ItemInstance helmet = getInventory().getPaperdollItem(Inventory.PAPERDOLL_HEAD); if (helmet != null && Config.LISTID_RESTRICT_OLY.contains(helmet.getItemId())) { ItemInstance[] unequipped
-	 * = getInventory().unEquipItemInBodySlotAndRecord(helmet.getItem().getBodyPart()); InventoryUpdate iu = new InventoryUpdate(); for (ItemInstance element : unequipped) iu.addModifiedItem(element); sendPacket(iu); } //ACESSORIOS HAIR ItemInstance HAIR =
-	 * getInventory().getPaperdollItem(Inventory.PAPERDOLL_HAIR); if (HAIR != null && Config.LISTID_RESTRICT_OLY.contains(HAIR.getItemId())) { ItemInstance[] unequipped = getInventory().unEquipItemInBodySlotAndRecord(HAIR.getItem().getBodyPart()); InventoryUpdate iu = new InventoryUpdate(); for
-	 * (ItemInstance element : unequipped) iu.addModifiedItem(element); sendPacket(iu); } //ACESSORIOS HAIR1 ItemInstance HAIR1 = getInventory().getPaperdollItem(Inventory.PAPERDOLL_FACE); if (HAIR1 != null && Config.LISTID_RESTRICT_OLY.contains(HAIR1.getItemId())) { ItemInstance[] unequipped =
-	 * getInventory().unEquipItemInBodySlotAndRecord(HAIR1.getItem().getBodyPart()); InventoryUpdate iu = new InventoryUpdate(); for (ItemInstance element : unequipped) iu.addModifiedItem(element); sendPacket(iu); } //ACESSORIOS HAIR2 ItemInstance HAIR2 =
-	 * getInventory().getPaperdollItem(Inventory.PAPERDOLL_HAIRALL); if (HAIR2 != null && Config.LISTID_RESTRICT_OLY.contains(HAIR2.getItemId())) { ItemInstance[] unequipped = getInventory().unEquipItemInBodySlotAndRecord(HAIR2.getItem().getBodyPart()); InventoryUpdate iu = new InventoryUpdate();
-	 * for (ItemInstance element : unequipped) iu.addModifiedItem(element); sendPacket(iu); } }
-	 */
-	
+	 
 	public void removeItens()
 	{
 		// Mapeia os slots com suas respectivas condições de remoção
@@ -8955,6 +8934,7 @@ public class Player extends Playable
 					for (ItemInstance element : unequipped)
 					{
 						iu.addModifiedItem(element);
+						CustomAugmentManager.getInstance().removeWeaponAugment(this, element);
 					}
 				}
 			}
@@ -14658,5 +14638,59 @@ public class Player extends Playable
 	public L2SpawnDropZone getDeathSpawnDropZone()
 	{
 		return _deathSpawnDropZone;
+	}
+	
+	private int _movePacketViolations;
+	private long _lastMoveViolationTime;
+
+	public void increaseMovePacketViolation()
+	{
+	    long now = System.currentTimeMillis();
+
+	    if (now - _lastMoveViolationTime > 10000)
+	        _movePacketViolations = 0;
+
+	    _lastMoveViolationTime = now;
+	    _movePacketViolations++;
+
+	    if (_movePacketViolations >= 5)
+	    {
+	        sendPacket(ActionFailed.STATIC_PACKET);
+	        logout(false);
+	    }
+	}
+	
+	private int _tempAugmentItem;
+
+	public void setTempAugmentItem(int objectId)
+	{
+	    _tempAugmentItem = objectId;
+	}
+
+	public int getTempAugmentItem()
+	{
+	    return _tempAugmentItem;
+	}
+
+	public void clearTempAugmentItem()
+	{
+	    _tempAugmentItem = 0;
+	}
+	
+	private AugmentStoneHolder _tempAugmentData;
+
+	public void setTempAugmentData(AugmentStoneHolder data)
+	{
+	    _tempAugmentData = data;
+	}
+
+	public AugmentStoneHolder getTempAugmentData()
+	{
+	    return _tempAugmentData;
+	}
+
+	public void clearTempAugmentData()
+	{
+	    _tempAugmentData = null;
 	}
 }

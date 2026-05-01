@@ -1,6 +1,7 @@
 package net.sf.l2j.gameserver.network.clientpackets;
 
 import net.sf.l2j.Config;
+import net.sf.l2j.gameserver.instancemanager.custom.CustomAugmentManager;
 import net.sf.l2j.gameserver.model.actor.Player;
 import net.sf.l2j.gameserver.model.item.instance.ItemInstance;
 import net.sf.l2j.gameserver.model.item.kind.Item;
@@ -130,13 +131,16 @@ public final class RequestDropItem extends L2GameClientPacket
 			{
 				itm.unChargeAllShots();
 				iu.addModifiedItem(itm);
+				CustomAugmentManager.getInstance().removeWeaponAugment(activeChar, itm);
 			}
 			
 			activeChar.sendPacket(iu);
 			activeChar.broadcastUserInfo();
 			activeChar.sendPacket(new ItemList(activeChar, true));
+			
 		}
 		
 		activeChar.dropItem("Drop", _objectId, _count, _x, _y, _z, null, false);
+		
 	}
 }

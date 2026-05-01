@@ -397,12 +397,12 @@ public class VoicedBossSpawn implements IVoicedCommandHandler
 		final StringBuilder sb = new StringBuilder(512);
 		sb.append("<table width=280 cellpadding=4 cellspacing=0 bgcolor=000000>");
 		sb.append("<tr>");
-		sb.append("<td width=180 align=left>");
+		sb.append("<td width=150 align=left>");
 		sb.append("<a action=\"bypass -h voiced_shifffmodddrop ").append(row.npcId).append(" 1\">");
 		sb.append("<font color=ffffff>").append(safeName).append("</font>");
 		sb.append("</a>");
 		sb.append("</td>");
-		sb.append("<td width=90 align=right>").append(status).append("</td>");
+		sb.append("<td width=150 align=right>").append(status).append("</td>");
 		sb.append("</tr>");
 		sb.append("</table>");
 		sb.append("<img src=\"L2UI.SquareGray\" width=280 height=1>");
