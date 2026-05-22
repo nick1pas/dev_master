@@ -1,131 +1,344 @@
-# 📦 DEV Project - Instalação e Execução
+<div align="center">
 
-Se você baixou o pacote do servidor e está com dúvidas de como executar, siga este passo a passo simples:
+# ⚔️ NEXORA Project
+
+### Lineage II Interlude Development Project
+
+Servidor baseado em Java 11 e MariaDB com ferramentas auxiliares para cliente, launcher, atualizador e painel web.
+
+![Java](https://img.shields.io/badge/Java-11-orange)
+![MariaDB](https://img.shields.io/badge/MariaDB-10.4-blue)
+![Platform](https://img.shields.io/badge/Platform-Windows-success)
+![Status](https://img.shields.io/badge/Status-Active-brightgreen)
+
+</div>
 
 ---
 
-## 📦 Downloads Necessários
+# 📖 Sobre o Projeto
 
-| Componente   | Download |
-|--------------|----------|
-| 🔧 Client Files (System, Animations, SysTextures...) | [Download Client](https://github.com/JulioPradoL2j/L2JDev-Patch) |
-| ☕ Java 11 | [Download Java 11](https://mega.nz/file/V7tj1arS#OKWaTzaCqYK0m3iMmR0kW3TddfAJoiu8a20kOFEKShk) |
-| 🛢️ MariaDB 10.4 | [Download MariaDB](https://mega.nz/file/1jEykRgL#DDuIGktiFbmE-M0jMzhUvYVckw1U0ov-OnZEYS5vopU) |
+O **NEXORA Project** é uma base de desenvolvimento para servidores **Lineage II Interlude**, desenvolvida com foco em:
+
+- 🚀 Performance
+- 🔒 Segurança
+- 🛠️ Facilidade de manutenção
+- 📦 Distribuição simplificada
+- 🌐 Integração com Website e Launcher
+- 🔄 Sistema de atualização automática
 
 ---
 
-## 1️⃣ Instalar o Java 11
+# ✨ Recursos
 
-Antes de tudo, é necessário instalar o Java 11:
+| Recurso | Status |
+|----------|----------|
+| Login Server | ✅ |
+| Game Server | ✅ |
+| Sistema de Atualização | ✅ |
+| Launcher Customizado | ✅ |
+| Proteção Cliente | ✅ |
+| InterfaceBlock | ✅ |
+| Painel Web | ✅ |
+| Banco MariaDB | ✅ |
+| Java 11 | ✅ |
 
-- Baixe o [Java 11](https://mega.nz/file/V7tj1arS#OKWaTzaCqYK0m3iMmR0kW3TddfAJoiu8a20kOFEKShk)
-- Instale normalmente.
+---
 
-Após a instalação, **crie a variável de ambiente `JAVA_HOME`:**
+# 📥 Downloads Oficiais
 
-### No Windows:
+## Arquivos do Projeto
 
-- Vá em: `Painel de Controle > Sistema > Configurações Avançadas > Variáveis de Ambiente`
-- Clique em **Nova (variável do sistema)**
-  - Nome: `JAVA_HOME`
-  - Valor: `C:\Program Files\AdoptOpenJDK\jdk-11.0.10.9-hotspot` _(ajuste conforme o local de instalação)_
-- Edite a variável `Path` e adicione: `%JAVA_HOME%\bin`
+| Componente | Link |
+|------------|------------|
+| 🛡️ DStupe.dll (Proteção Cliente) | https://github.com/JulioPradoL2j/L2Protection |
+| 🎮 Cliente Interlude + Patch | https://www.mediafire.com/file/8bwfzaco9k7jqv4/Lineage_II_-_Chronicle_Interlude.zip/file |
+| 🖥️ InterfaceBlock | https://github.com/JulioPradoL2j/InterfaceBlock |
+| 🚀 Launcher | https://github.com/JulioPradoL2j/L2Updater |
+| 🌐 Website / Painel Web | https://github.com/JulioPradoL2j/L2UpdaterWeb |
+| 🔄 Atualizador Compilado | https://github.com/JulioPradoL2j/CompiledFiles |
 
-### No Linux:
+---
 
-- Adicione no seu `~/.bashrc` ou `~/.zshrc`:
-```bash
-export JAVA_HOME=/caminho/para/AdoptOpenJDK/jdk-11.0.10.9-hotspot
-export PATH=$JAVA_HOME/bin:$PATH
+## Dependências
+
+| Software | Versão |
+|------------|------------|
+| ☕ Java JDK | 11 |
+| 🛢️ MariaDB | 10.4+ |
+| 🖥️ Eclipse IDE | Última versão |
+
+### Downloads
+
+Java 11
+
+https://mega.nz/file/V7tj1arS#OKWaTzaCqYK0m3iMmR0kW3TddfAJoiu8a20kOFEKShk
+
+MariaDB 10.4
+
+https://mega.nz/file/1jEykRgL#DDuIGktiFbmE-M0jMzhUvYVckw1U0ov-OnZEYS5vopU
+
+---
+
+# 🖥️ Requisitos do Sistema
+
+## Ambiente de Desenvolvimento
+
+| Item | Recomendado |
+|---------|---------|
+| Windows | 10 ou 11 |
+| Processador | Intel i5 / Ryzen 5 |
+| RAM | 8 GB |
+| SSD | 20 GB livres |
+| Java | JDK 11 |
+| Banco | MariaDB 10.4 |
+
+## Ambiente de Produção
+
+| Item | Recomendado |
+|---------|---------|
+| Windows Server | 2019 ou superior |
+| CPU | Xeon / Ryzen |
+| RAM | 16 GB |
+| SSD | Recomendado |
+| Rede | Conexão dedicada |
+
+---
+
+# ⚙️ Instalação Rápida
+
+## 1. Instalar Java 11
+
+Após instalar o Java configure a variável de ambiente:
+
+### JAVA_HOME
+
+```text
+C:\Program Files\Java\jdk-11
+```
+
+Adicionar ao PATH:
+
+```text
+%JAVA_HOME%\bin
+```
+
+Verificar instalação:
+
+```cmd
+java -version
+```
+
+Resultado esperado:
+
+```text
+openjdk version "11"
 ```
 
 ---
 
-## 2️⃣ Instalar o MariaDB
+## 2. Instalar MariaDB
 
-- Baixe e instale o [MariaDB](https://mega.nz/file/1jEykRgL#DDuIGktiFbmE-M0jMzhUvYVckw1U0ov-OnZEYS5vopU)
-- Durante a instalação, defina:
-  - **Usuário**: `root`
-  - **Senha**: `root`
+Instale o MariaDB e configure:
+
+```text
+Usuário: root
+Senha: root
+```
+
+Confirme que o serviço está iniciado.
 
 ---
 
-## 3️⃣ Rodar o banco de dados
+## 3. Criar Banco de Dados
 
-Após a instalação do MariaDB:
+Abra a pasta:
 
-- Vá até a pasta `tools/` do projeto
-- Execute o script correspondente ao seu sistema operacional para importar as tabelas e dados iniciais:
+```text
+tools\
+```
 
-### ✅ No **Windows**:
+Execute:
+
 ```bat
 install_db.bat
 ```
 
-### ✅ No **Linux**:
-```bash
-chmod +x install_db.sh
-./install_db.sh
+O instalador criará automaticamente:
+
+- Databases
+- Tabelas
+- Dados iniciais
+- Estrutura necessária
+
+---
+
+## 4. Importar Projeto no Eclipse
+
+Abra:
+
+```text
+File
+ └── Import
+      └── Existing Projects into Workspace
 ```
 
-> Você também pode usar um cliente como HeidiSQL, DBeaver ou MySQL Workbench para importar manualmente os arquivos `.sql` da pasta `tools/sql`.
+Selecione a pasta raiz do projeto.
 
 ---
 
-## 4️⃣ Importar o projeto no Eclipse
+## 5. Iniciar o Servidor
 
-- Abra o **Eclipse IDE**
-- Vá em: `File > Import > Existing Projects into Workspace`
-- Selecione a pasta raiz do projeto
-- Após a importação, procure pela pasta `launcher/`
+Dentro da pasta:
 
-Dentro dela estão os arquivos:
+```text
+launcher\
+```
 
-- `LoginServer.launch`
-- `GameServer.launch`
+Execute:
 
-Execute o servidor clicando com o botão direito no `.launch` desejado e escolha:  
-**Run As > Java Application**
+```text
+LoginServer.launch
+```
 
----
+Depois:
 
-## 5️⃣ Compilar o pacote manualmente
+```text
+GameServer.launch
+```
 
-Se quiser compilar o projeto fora do Eclipse:
+Ou:
 
-- Use o `build.xml` com o EclipesIDE para compilar o código-fonte
-  - Ele irá gerar os `.class` e `.jar` necessários
-- Depois use o `amount.xml` para:
-  - Agrupar LoginServer, GameServer, Imgs, Tools e libs
-  - Criar uma pasta `Zip/` com todos os arquivos prontos para execução
-
----
-
-## 📌 Observações
-
-- O projeto requer Java 11 especificamente — versões superiores podem gerar incompatibilidades.
-- Certifique-se de que o MariaDB está com o serviço ativo antes de rodar o script.
+```text
+Run As → Java Application
+```
 
 ---
 
-## ❓ Problemas comuns / Common Issues
+# 🔨 Compilação
 
-- ERRO: "mysql: command not found"
-  ➤ Solução: Verifique se o MySQL/MariaDB está instalado e adicionado ao PATH.
+Para gerar os binários:
 
-- ERRO: Acesso negado para 'root'
-  ➤ Solução: Altere a senha no script ou use um usuário com permissão.
+```text
+build.xml
+```
 
-- Nenhuma tabela é criada
-  ➤ Solução: Verifique se os arquivos .sql estão realmente dentro da pasta /sql.
+Para gerar o pacote final:
+
+```text
+amount.xml
+```
+
+Estrutura gerada:
+
+```text
+Zip/
+├── LoginServer
+├── GameServer
+├── libs
+├── tools
+├── images
+└── configs
+```
 
 ---
 
-## 📬 Suporte
+# 🌐 Portas Utilizadas
 
-Caso tenha dificuldades, poste sua dúvida no fórum ou envie uma mensagem com:
-- Print do erro
-- Sistema operacional
-- O que tentou fazer
-- juliopradrol2j@gmail.com
-Obrigado por usar o projeto L2JDev!
+| Serviço | Porta |
+|----------|----------|
+| Login Server | 2106 |
+| Game Server | 7777 |
+| MariaDB | 3306 |
+
+Caso utilize VPS ou dedicado, libere essas portas no Firewall.
+
+---
+
+# ❗ Problemas Comuns
+
+### Java não encontrado
+
+Verifique:
+
+```cmd
+java -version
+```
+
+e confirme a configuração do:
+
+```text
+JAVA_HOME
+```
+
+---
+
+### Access denied for user 'root'
+
+Verifique usuário e senha do banco configurados corretamente.
+
+---
+
+### Nenhuma tabela criada
+
+Confirme a existência dos arquivos SQL em:
+
+```text
+tools\sql\
+```
+
+---
+
+### Servidor não conecta ao banco
+
+Verifique:
+
+- MariaDB iniciado
+- Porta 3306 aberta
+- Usuário configurado corretamente
+- Configurações do database.properties
+
+---
+
+# 📚 Repositórios Relacionados
+
+| Projeto | Link |
+|----------|----------|
+| L2Protection | https://github.com/JulioPradoL2j/L2Protection |
+| InterfaceBlock | https://github.com/JulioPradoL2j/InterfaceBlock |
+| L2Updater | https://github.com/JulioPradoL2j/L2Updater |
+| L2UpdaterWeb | https://github.com/JulioPradoL2j/L2UpdaterWeb |
+| CompiledFiles | https://github.com/JulioPradoL2j/CompiledFiles |
+
+---
+
+# 📞 Suporte
+
+Ao reportar um problema informe:
+
+- Sistema Operacional
+- Versão do Java
+- Mensagem de erro completa
+- Log do LoginServer
+- Log do GameServer
+
+📧 E-mail:
+
+juliopradol2j@gmail.com
+
+---
+
+# 📜 Licença
+
+Este projeto é disponibilizado para fins de estudo, desenvolvimento e manutenção de servidores Lineage II.
+
+Verifique os termos definidos pelos autores antes da redistribuição.
+
+---
+
+<div align="center">
+
+### © NEXORA Project
+
+Desenvolvido para a comunidade Lineage II
+
+</div>
