@@ -11,8 +11,8 @@ import java.security.KeyPair;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import net.sf.l2j.Config;
@@ -32,11 +32,7 @@ import net.sf.l2j.loginserver.network.loginserverpackets.LoginServerFail;
 import net.sf.l2j.loginserver.network.loginserverpackets.PlayerAuthResponse;
 import net.sf.l2j.loginserver.network.serverpackets.ServerBasePacket;
 
-/**
- * @author -Wooden-
- * @author KenM
- */
-public class GameServerThread extends Thread
+public class GameServerThread implements Runnable
 {
 	protected static final Logger _log = Logger.getLogger(GameServerThread.class.getName());
 	private final Socket _connection;
@@ -52,11 +48,11 @@ public class GameServerThread extends Thread
 	private GameServerInfo _gsi;
 	
 	/** Authed Clients on a GameServer */
-	private final Set<String> _accountsOnGameServer = new HashSet<>();
+	private final Set<String> _accountsOnGameServer = ConcurrentHashMap.newKeySet();
 	
 	private String _connectionIPAddress;
 	
-	@SuppressWarnings("unused")
+
 	@Override
 	public void run()
 	{
@@ -77,7 +73,6 @@ public class GameServerThread extends Thread
 			int lengthHi = 0;
 			int lengthLo = 0;
 			int length = 0;
-			boolean checksumOk = false;
 			for (;;)
 			{
 				lengthLo = _in.read();
@@ -91,10 +86,14 @@ public class GameServerThread extends Thread
 				
 				int receivedBytes = 0;
 				int newBytes = 0;
-				while (newBytes != -1 && receivedBytes < length - 2)
+				while (receivedBytes < data.length)
 				{
-					newBytes = _in.read(data, 0, length - 2);
-					receivedBytes = receivedBytes + newBytes;
+					newBytes = _in.read(data, receivedBytes, data.length - receivedBytes);
+					
+					if (newBytes < 0)
+						break;
+					
+					receivedBytes += newBytes;
 				}
 				
 				if (receivedBytes != length - 2)
@@ -105,13 +104,6 @@ public class GameServerThread extends Thread
 				
 				// decrypt if we have a key
 				data = _blowfish.decrypt(data);
-				checksumOk = NewCrypt.verifyChecksum(data);
-			//	if (!checksumOk)
-			//	{
-			//		_log.warning("Incorrect packet checksum, closing connection.");
-			//		return;
-			//	}
-				
 				int packetType = data[0] & 0xff;
 				switch (packetType)
 				{
@@ -337,15 +329,7 @@ public class GameServerThread extends Thread
 	private void forceClose(int reason)
 	{
 		sendPacket(new LoginServerFail(reason));
-		
-		try
-		{
-			_connection.close();
-		}
-		catch (IOException e)
-		{
-			_log.finer("GameServerThread: Failed disconnecting banned server, server already disconnected.");
-		}
+		closeConnection();
 	}
 	
 	/**
@@ -370,20 +354,24 @@ public class GameServerThread extends Thread
 	{
 		_connection = con;
 		_connectionIp = con.getInetAddress().getHostAddress();
+		
 		try
 		{
+			_connection.setTcpNoDelay(true);
+			_connection.setKeepAlive(true);
+			
 			_in = _connection.getInputStream();
 			_out = new BufferedOutputStream(_connection.getOutputStream());
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			_log.warning("Failed to initialize GameServer connection: " + e.getMessage());
 		}
+		
 		KeyPair pair = GameServerTable.getInstance().getKeyPair();
 		_privateKey = (RSAPrivateKey) pair.getPrivate();
 		_publicKey = (RSAPublicKey) pair.getPublic();
 		_blowfish = new NewCrypt("_;v.]05-31!|+-%xT!^[$\00");
-		start();
 	}
 	
 	/**
@@ -391,27 +379,42 @@ public class GameServerThread extends Thread
 	 */
 	private void sendPacket(ServerBasePacket sl)
 	{
+		if (_connection.isClosed())
+			return;
+		
 		try
 		{
 			byte[] data = sl.getContent();
 			NewCrypt.appendChecksum(data);
 			data = _blowfish.crypt(data);
 			
-			int len = data.length + 2;
+			final int len = data.length + 2;
+			
 			synchronized (_out)
 			{
 				_out.write(len & 0xff);
-				_out.write(len >> 8 & 0xff);
+				_out.write((len >> 8) & 0xff);
 				_out.write(data);
 				_out.flush();
 			}
 		}
 		catch (IOException e)
 		{
-			_log.severe("IOException while sending packet " + sl.getClass().getSimpleName() + ".");
+			_log.warning("IOException while sending packet " + sl.getClass().getSimpleName() + ": " + e.getMessage());
+			closeConnection();
 		}
 	}
-	
+	private void closeConnection()
+	{
+		try
+		{
+			_connection.close();
+		}
+		catch (IOException e)
+		{
+			_log.finer("GameServer connection already closed.");
+		}
+	}
 	public void kickPlayer(String account)
 	{
 		sendPacket(new KickPlayer(account));

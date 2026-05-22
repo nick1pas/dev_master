@@ -277,6 +277,7 @@ import net.sf.l2j.gameserver.skills.funcs.FuncMaxCpMul;
 import net.sf.l2j.gameserver.skills.l2skills.L2SkillSiegeFlag;
 import net.sf.l2j.gameserver.skills.l2skills.L2SkillSummon;
 import net.sf.l2j.gameserver.taskmanager.AttackStanceTaskManager;
+import net.sf.l2j.gameserver.taskmanager.DailyRewardTaskManager;
 import net.sf.l2j.gameserver.taskmanager.ItemsOnGroundTaskManager;
 import net.sf.l2j.gameserver.taskmanager.PvpFlagTaskManager;
 import net.sf.l2j.gameserver.taskmanager.ShadowItemTaskManager;
@@ -287,6 +288,7 @@ import net.sf.l2j.gameserver.templates.skills.L2EffectType;
 import net.sf.l2j.gameserver.templates.skills.L2SkillType;
 import net.sf.l2j.gameserver.util.Broadcast;
 import net.sf.l2j.gameserver.util.Util;
+import net.sf.l2j.mods.manager.FakePlayerManager;
 import net.sf.l2j.sellbuff.SellBuffMsg;
 
 /**
@@ -1501,7 +1503,10 @@ public class Player extends Playable
 			sendPacket(new UserInfo(this));
 			broadcastRelationsChanges();
 		}
-		
+		if (FakePlayerManager.getInstance().getPlayer(getObjectId()) != null)
+		{
+			return;
+		}
 		// send message with new karma value
 		sendPacket(SystemMessage.getSystemMessage(SystemMessageId.YOUR_KARMA_HAS_BEEN_CHANGED_TO_S1).addNumber(karma));
 		
@@ -9367,7 +9372,7 @@ public class Player extends Playable
 		}
 		// Jail task
 		updatePunishState();
-		
+		DailyRewardTaskManager.getInstance().add(this);
 		if (isGM())
 		{
 			if (isInvul())
@@ -10001,7 +10006,7 @@ public class Player extends Playable
 			unSummonAgathion();
 			lostAgathionSkills();
 		}
-		
+
 		cleanup();
 		store();
 		super.deleteMe();
@@ -10021,6 +10026,7 @@ public class Player extends Playable
 			setTarget(null);
 			
 			PartyMatchWaitingList.getInstance().removePlayer(this);
+			DailyRewardTaskManager.getInstance().remove(this);
 			if (_partyroom != 0)
 			{
 				PartyMatchRoom room = PartyMatchRoomList.getInstance().getRoom(_partyroom);

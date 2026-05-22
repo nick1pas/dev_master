@@ -4,6 +4,7 @@ import java.util.concurrent.ScheduledFuture;
 
 import net.sf.l2j.Config;
 import net.sf.l2j.dungeon.Dungeon;
+import net.sf.l2j.gameserver.datatables.xml.CommunityBoardDailyRewardData;
 import net.sf.l2j.gameserver.model.MinionList;
 import net.sf.l2j.gameserver.model.actor.Attackable;
 import net.sf.l2j.gameserver.model.actor.Creature;
@@ -11,6 +12,7 @@ import net.sf.l2j.gameserver.model.actor.Player;
 import net.sf.l2j.gameserver.model.actor.knownlist.MonsterKnownList;
 import net.sf.l2j.gameserver.model.actor.template.NpcTemplate;
 import net.sf.l2j.gameserver.network.serverpackets.CreatureSay;
+import net.sf.l2j.mods.manager.FakePlayerManager;
 
 /**
  * This class manages monsters.
@@ -128,6 +130,52 @@ public class L2MonsterInstance extends Attackable
 			{
 				if (_dungeon != null)
 					_dungeon.onMobKill(this);
+				
+			
+				/*
+				 * DAILY REWARD KILL TRACK
+				 * 
+				 * Avoid farming low level monsters.
+				 * Example:
+				 * Player Level 80
+				 * Monster must be at least Level 70
+				 */
+				final int playerLevel = player.getStat().getLevel();
+				final int monsterLevel = getStat().getLevel();
+				
+				/*
+				 * LEVEL RANGE
+				 */
+				final int minMonsterLevel = playerLevel - 10;
+				
+				/*
+				 * VALID KILL
+				 */
+				if (monsterLevel >= minMonsterLevel)
+				{
+					
+					if (FakePlayerManager.getInstance().getPlayer(player.getObjectId()) != null)
+					{
+						return true;
+					}
+					
+					final long lastClaim = player.getMemos().getLong("dailyRewardLastClaim", 0);
+
+					final long cooldown = CommunityBoardDailyRewardData.getInstance().getSettings().getCooldownHours() * 60L * 60L * 1000L;
+
+					if (lastClaim > 0)
+					{
+						if ((System.currentTimeMillis() - lastClaim) < cooldown)
+							return true;
+					}
+					
+					int kills = player.getMemos().getInteger("dailyRewardKills", 0);
+					
+					player.getMemos().set("dailyRewardKills", kills + 1);
+					
+					if (player.getMemos().hasChanges())
+						player.getMemos().storeMe();
+				}
 				
 				if (Config.MISSION_LIST_MONSTER.contains(Integer.valueOf(getTemplate().getNpcId())) && Config.ACTIVE_MISSION)
 					if (player.getParty() == null)

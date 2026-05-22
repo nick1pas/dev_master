@@ -88,6 +88,7 @@ import net.sf.l2j.gameserver.datatables.StaticObjects;
 import net.sf.l2j.gameserver.datatables.SummonItemsData;
 import net.sf.l2j.gameserver.datatables.TeleportLocationTable;
 import net.sf.l2j.gameserver.datatables.xml.AugmentStoneData;
+import net.sf.l2j.gameserver.datatables.xml.CommunityBoardDailyRewardData;
 import net.sf.l2j.gameserver.datatables.xml.DressMeData;
 import net.sf.l2j.gameserver.datatables.xml.EnchantSkillRateData;
 import net.sf.l2j.gameserver.datatables.xml.FakePcsTable;
@@ -385,11 +386,12 @@ public class GameServer
 		{
 			FishingChampionshipManager.getInstance();
 		}
- 
+		
 		StringUtil.printSection("DressMe Data");
 		DressMeData.getInstance();
 		
 		StringUtil.printSection("Custom World");
+		CommunityBoardDailyRewardData.getInstance();
 		AugmentStoneData.getInstance();
 		CustomAugmentManager.getInstance().load();
 		TalentData.getInstance();
@@ -417,7 +419,7 @@ public class GameServer
 		TimeZoneManager.getInstance();
 		DungeonData.getInstance();
 		StringUtil.printSection("Events");
-	
+		
 		if (Config.CKM_ENABLED)
 		{
 			CharacterKillingManager.getInstance().init();
@@ -551,8 +553,7 @@ public class GameServer
 			_log.info("Tournament Event is disabled");
 		}
 		
-		ThreadPool.schedule("GameServer: L2SpawnDropZone task replaceExistingSpawnsNow",() ->
-		{
+		ThreadPool.schedule("GameServer: L2SpawnDropZone task replaceExistingSpawnsNow", () -> {
 			for (L2SpawnDropZone temp : ZoneManager.getInstance().getAllZones(L2SpawnDropZone.class))
 			{
 				if (temp != null)
@@ -584,7 +585,7 @@ public class GameServer
 		}
 		
 		StringUtil.printSection("System");
-	 
+		
 		Runtime.getRuntime().addShutdownHook(Shutdown.getInstance());
 		ForumsBBSManager.getInstance();
 		_log.config("IdFactory: Free ObjectIDs remaining: " + IdFactory.getInstance().size());
@@ -699,5 +700,4 @@ public class GameServer
 		gameServer = new GameServer();
 	}
 	
- 
 }

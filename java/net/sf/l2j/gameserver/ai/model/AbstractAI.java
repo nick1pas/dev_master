@@ -745,16 +745,13 @@ abstract class AbstractAI implements Ctrl
 				}
 			}
 			
-			// Se o ator for Agathion, a distância de seguimento será 20
 			if (_actor instanceof L2AgathionInstance)
 			{
 				_range = 30;
 			}
 			
-			// Agora, o Agathion irá se mover sempre para a direção do seu ponto de spawn, não para a frente do personagem
 			if (!_actor.isInsideRadius(followTarget, _range, true, false))
 			{
-				// Usando Geodata para verificar se pode se mover para o ponto de spawn
 				if (GeoEngine.getInstance().canMoveToTarget(_actor.getX(), _actor.getY(), _actor.getZ(), spawnX, spawnY, spawnZ))
 				{
 					moveToPawn(followTarget, _range);

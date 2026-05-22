@@ -28,6 +28,7 @@ import net.sf.l2j.gameserver.datatables.NpcWalkerRoutesTable;
 import net.sf.l2j.gameserver.datatables.SkillTable;
 import net.sf.l2j.gameserver.datatables.TeleportLocationTable;
 import net.sf.l2j.gameserver.datatables.xml.AugmentStoneData;
+import net.sf.l2j.gameserver.datatables.xml.CommunityBoardDailyRewardData;
 import net.sf.l2j.gameserver.datatables.xml.DressMeData;
 import net.sf.l2j.gameserver.datatables.xml.EnchantSkillRateData;
 import net.sf.l2j.gameserver.datatables.xml.FakePcsTable;
@@ -219,6 +220,11 @@ public class AdminAdmin implements IAdminCommandHandler
 					{
 						TalentData.getInstance().reload();
 						activeChar.sendMessage("The content of data/xml/custom/talentTrees alls .xml has been reloaded.");
+					}
+					else if (type.startsWith("dailyreward"))
+					{
+						CommunityBoardDailyRewardData.getInstance().reload();
+						activeChar.sendMessage("The content of data/xml/custom/CommunityBoardDailyRewards alls .xml has been reloaded.");
 					}
 					else if (type.startsWith("augment"))
 					{

@@ -202,11 +202,9 @@ public class GameServerTable
 		// auth
 		private int _id;
 		private final byte[] _hexId;
-		private boolean _isAuthed;
-		
-		// status
-		private GameServerThread _gst;
-		private int _status;
+		private volatile boolean _isAuthed;
+		private volatile GameServerThread _gst;
+		private volatile int _status;
 		
 		// network
 		private String _internalIp;

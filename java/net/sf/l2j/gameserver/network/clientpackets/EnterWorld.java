@@ -136,6 +136,7 @@ public class EnterWorld extends L2GameClientPacket
 				GmListTable.getInstance().addGm(activeChar, false);
 			else
 				GmListTable.getInstance().addGm(activeChar, true);
+			
 		}
 		
 		// Set dead status if applies
